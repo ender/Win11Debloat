@@ -1,304 +1,9 @@
 {
   "Version": "1.0",
-  "Categories": [
-    {
-      "Name": "Privacy & Suggested Content",
-      "Icon": "&#xE72E;"
-    },
-    {
-      "Name": "System",
-      "Icon": "&#xe770;"
-    },
-    {
-      "Name": "Start Menu & Search",
-      "Icon": "&#xe8fc;"
-    },
-    {
-      "Name": "AI",
-      "Icon": "&#xe794;"
-    },
-    {
-      "Name": "Windows Update",
-      "Icon": "&#xe895;"
-    },
-    {
-      "Name": "Taskbar",
-      "Icon": "&#xe75b;"
-    },
-    {
-      "Name": "Appearance",
-      "Icon": "&#xE771;"
-    },
-    {
-      "Name": "File Explorer",
-      "Icon": "&#xec50;"
-    },
-    {
-      "Name": "Gaming",
-      "Icon": "&#xE7FC;"
-    },
-    {
-      "Name": "Multi-tasking",
-      "Icon": "&#xE7C4;"
-    },
-    {
-      "Name": "Optional Windows Features",
-      "Icon": "&#xefda;"
-    },
-    {
-      "Name": "Other",
-      "Icon": "&#xE713;"
-    }
-  ],
-  "UiGroups": [
-    {
-      "GroupId": "SearchIcon",
-      "Label": "Taskbar search style",
-      "ToolTip": "This setting allows you to customize the appearance of the search box on the taskbar.",
-      "Category": "Taskbar",
-      "Priority": 2,
-      "Values": [
-        {
-          "Label": "Show search box (Default)",
-          "FeatureIds": [
-            "ShowSearchBoxTb"
-          ]
-        },
-        {
-          "Label": "Show search icon and label",
-          "FeatureIds": [
-            "ShowSearchLabelTb"
-          ]
-        },
-        {
-          "Label": "Show search icon only",
-          "FeatureIds": [
-            "ShowSearchIconTb"
-          ]
-        },
-        {
-          "Label": "Hide",
-          "FeatureIds": [
-            "HideSearchTb"
-          ]
-        }
-      ]
-    },
-    {
-      "GroupId": "MultiMon",
-      "Label": "Show taskbar apps on",
-      "ToolTip": "This setting allows you to choose where taskbar app buttons are shown when using multiple monitors.",
-      "Category": "Taskbar",
-      "Values": [
-        {
-          "Label": "All taskbars (Default)",
-          "FeatureIds": [
-            "MMTaskbarModeAll"
-          ]
-        },
-        {
-          "Label": "Main taskbar and taskbar where window is open",
-          "FeatureIds": [
-            "MMTaskbarModeMainActive"
-          ]
-        },
-        {
-          "Label": "Taskbar where window is open",
-          "FeatureIds": [
-            "MMTaskbarModeActive"
-          ]
-        }
-      ]
-    },
-    {
-      "GroupId": "CombineButtons",
-      "Label": "Combine taskbar buttons on the main display",
-      "ToolTip": "This setting allows you to choose how taskbar buttons are combined on the main display.",
-      "Category": "Taskbar",
-      "Values": [
-        {
-          "Label": "Always (Default)",
-          "FeatureIds": [
-            "CombineTaskbarAlways"
-          ]
-        },
-        {
-          "Label": "When taskbar is full",
-          "FeatureIds": [
-            "CombineTaskbarWhenFull"
-          ]
-        },
-        {
-          "Label": "Never",
-          "FeatureIds": [
-            "CombineTaskbarNever"
-          ]
-        }
-      ]
-    },
-    {
-      "GroupId": "CombineMMButtons",
-      "Label": "Combine taskbar buttons on secondary displays",
-      "ToolTip": "This setting allows you to choose how taskbar buttons are combined on secondary displays.",
-      "Category": "Taskbar",
-      "Values": [
-        {
-          "Label": "Always (Default)",
-          "FeatureIds": [
-            "CombineMMTaskbarAlways"
-          ]
-        },
-        {
-          "Label": "When taskbar is full",
-          "FeatureIds": [
-            "CombineMMTaskbarWhenFull"
-          ]
-        },
-        {
-          "Label": "Never",
-          "FeatureIds": [
-            "CombineMMTaskbarNever"
-          ]
-        }
-      ]
-    },
-    {
-      "GroupId": "ExplorerLocation",
-      "Label": "Open File Explorer to",
-      "ToolTip": "This setting allows you to choose the default location that File Explorer opens to.",
-      "Category": "File Explorer",
-      "Priority": 1,
-      "Values": [
-        {
-          "Label": "Home (Default)",
-          "FeatureIds": [
-            "ExplorerToHome"
-          ]
-        },
-        {
-          "Label": "This PC",
-          "FeatureIds": [
-            "ExplorerToThisPC"
-          ]
-        },
-        {
-          "Label": "Downloads",
-          "FeatureIds": [
-            "ExplorerToDownloads"
-          ]
-        },
-        {
-          "Label": "OneDrive",
-          "FeatureIds": [
-            "ExplorerToOneDrive"
-          ]
-        }
-      ]
-    },
-    {
-      "GroupId": "DriveLetterPosition",
-      "Label": "Drive letter position",
-      "ToolTip": "This setting allows you to choose where drive letters are shown in File Explorer.",
-      "Category": "File Explorer",
-      "Priority": 20,
-      "Values": [
-        {
-          "Label": "Show drive letters after drive label (Default)",
-          "FeatureIds": [
-            "ShowDriveLettersLast"
-          ]
-        },
-        {
-          "Label": "Show drive letters before drive label",
-          "FeatureIds": [
-            "ShowDriveLettersFirst"
-          ]
-        },
-        {
-          "Label": "Show network drive letters before drive label",
-          "FeatureIds": [
-            "ShowNetworkDriveLettersFirst"
-          ]
-        },
-        {
-          "Label": "Hide all drive letters",
-          "FeatureIds": [
-            "HideDriveLetters"
-          ]
-        }
-      ]
-    },
-    {
-      "GroupId": "ShowTabsInAltTab",
-      "Label": "Show tabs from apps when snapping or pressing Alt+Tab",
-      "ToolTip": "This setting allows you to choose whether to show tabs from apps (such as Edge browser tabs) when snapping windows or pressing Alt+Tab.",
-      "Category": "Multi-tasking",
-      "Priority": 10,
-      "Values": [
-        {
-          "Label": "Don't show tabs",
-          "FeatureIds": [
-            "HideTabsInAltTab"
-          ]
-        },
-        {
-          "Label": "Show 3 most recent tabs (Default)",
-          "FeatureIds": [
-            "Show3TabsInAltTab"
-          ]
-        },
-        {
-          "Label": "Show 5 most recent tabs",
-          "FeatureIds": [
-            "Show5TabsInAltTab"
-          ]
-        },
-        {
-          "Label": "Show 20 most recent tabs",
-          "FeatureIds": [
-            "Show20TabsInAltTab"
-          ]
-        }
-      ]
-    },
-    {
-      "GroupId": "StartAllAppsView",
-      "Label": "Start menu 'All Apps' view",
-      "ToolTip": "This setting allows you to change the layout of the 'All Apps' section in the start menu, or hide it entirely. Hiding this section may make it harder to find installed apps on your system. This feature uses policies, which will lock down certain settings.",
-      "Category": "Start Menu & Search",
-      "Values": [
-        {
-          "Label": "Hide",
-          "FeatureIds": [
-            "DisableStartAllApps"
-          ]
-        },
-        {
-          "Label": "Category (Default)",
-          "FeatureIds": [
-            "StartAllAppsCategory"
-          ]
-        },
-        {
-          "Label": "Grid",
-          "FeatureIds": [
-            "StartAllAppsGrid"
-          ]
-        },
-        {
-          "Label": "List",
-          "FeatureIds": [
-            "StartAllAppsList"
-          ]
-        }
-      ]
-    }
-  ],
   "Features": [
     {
       "FeatureId": "RemoveApps",
       "Label": "Remove the apps specified with the 'Apps' parameter",
-      "Category": null,
       "RegistryKey": null,
       "ApplyText": "Removing selected apps",
       "UndoLabel": null,
@@ -310,7 +15,6 @@
     {
       "FeatureId": "Apps",
       "Label": "The selection of apps to remove, specified as a comma separated list. Use 'Default' (or omit) to use the default apps list",
-      "Category": null,
       "RegistryKey": null,
       "ApplyText": "Removing selected apps",
       "UndoLabel": null,
@@ -322,7 +26,6 @@
     {
       "FeatureId": "RemoveGamingApps",
       "Label": "Remove the Xbox App and Xbox Gamebar",
-      "Category": null,
       "RegistryKey": null,
       "ApplyText": "Removing gaming related apps",
       "UndoLabel": null,
@@ -334,7 +37,6 @@
     {
       "FeatureId": "RemoveHPApps",
       "Label": "Remove HP OEM applications",
-      "Category": null,
       "RegistryKey": null,
       "ApplyText": "Removing HP apps",
       "UndoLabel": null,
@@ -346,8 +48,6 @@
     {
       "FeatureId": "DisableTelemetry",
       "Label": "Disable telemetry, tracking & targeted ads",
-      "ToolTip": "This setting disables telemetry, diagnostic data collection, activity history, app-launch tracking, targeted ads and more. It limits the data that is sent to Microsoft about your device and usage. If you are a Windows Insider, updates may be blocked until optional diagnostic data collection is turned back on.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Telemetry.reg",
       "ApplyText": "Disabling telemetry and diagnostic data collection",
       "UndoLabel": "Enable telemetry, tracking & targeted ads",
@@ -359,8 +59,6 @@
     {
       "FeatureId": "DisableSuggestions",
       "Label": "Disable tips, tricks & suggested content throughout Windows",
-      "ToolTip": "This setting removes many annoying distractions from Windows. This includes things like notifications, reminders and sync provider ads. It also prevents automated installation of suggested apps.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Windows_Suggestions.reg",
       "ApplyText": "Disabling tips, tricks, suggestions and ads throughout Windows",
       "UndoLabel": "Enable tips, tricks & suggested content throughout Windows",
@@ -372,8 +70,6 @@
     {
       "FeatureId": "DisableLocationServices",
       "Label": "Disable Windows location services & app location access",
-      "ToolTip": "This will turn off Windows Location Services and deny apps access to your location. This feature uses policies, which will lock down certain settings.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Location_Services.reg",
       "ApplyText": "Disabling Windows location services and app location access",
       "UndoLabel": "Enable Windows location services & app location access",
@@ -385,8 +81,6 @@
     {
       "FeatureId": "DisableFindMyDevice",
       "Label": "Disable Find My Device location tracking",
-      "ToolTip": "This will turn off the 'Find My Device' feature, which periodically sends your device's location to Microsoft. This feature uses policies, which will lock down certain settings.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Find_My_Device.reg",
       "ApplyText": "Disabling Find My Device location tracking",
       "UndoLabel": "Enable Find My Device location tracking",
@@ -398,8 +92,6 @@
     {
       "FeatureId": "DisableLockscreenTips",
       "Label": "Disable tips & tricks on the lock screen",
-      "ToolTip": "This will turn off the lockscreen spotlight option and disable the tips, tricks and fun facts that appear on the lock screen.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Lockscreen_Tips.reg",
       "ApplyText": "Disabling tips & tricks on the lock screen",
       "UndoLabel": "Enable tips & tricks on the lock screen",
@@ -411,8 +103,6 @@
     {
       "FeatureId": "DisableDesktopSpotlight",
       "Label": "Disable Windows Spotlight for desktop",
-      "ToolTip": "This will turn off the 'Windows Spotlight' feature for the desktop background, which shows different background images and occasionally tips and fun facts on the desktop. This feature uses policies, which will lock down certain settings.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Desktop_Spotlight.reg",
       "ApplyText": "Disabling the 'Windows Spotlight' desktop background option",
       "UndoLabel": "Enable Windows Spotlight for desktop",
@@ -424,8 +114,6 @@
     {
       "FeatureId": "DisableEdgeAds",
       "Label": "Disable ads, suggestions and newsfeed in Edge",
-      "ToolTip": "This will turn off various distractions from Microsoft Edge such as ads, suggestions and the MSN news feed. This feature uses policies, which will lock down certain settings.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Edge_Ads_And_Suggestions.reg",
       "ApplyText": "Disabling ads, suggestions and the MSN news feed in Microsoft Edge",
       "UndoLabel": "Enable ads, suggestions and newsfeed in Edge",
@@ -437,8 +125,6 @@
     {
       "FeatureId": "DisableCopilot",
       "Label": "Disable Microsoft Copilot",
-      "ToolTip": "This will disable and uninstall Microsoft Copilot, Windows' built-in AI assistant.",
-      "Category": "AI",
       "RegistryKey": "Disable_Copilot.reg",
       "ApplyText": "Disabling Microsoft Copilot",
       "UndoLabel": "Enable Microsoft Copilot",
@@ -450,8 +136,6 @@
     {
       "FeatureId": "DisableRecall",
       "Label": "Disable Windows Recall",
-      "ToolTip": "This will disable Windows Recall, an AI-powered feature that provides quick access to recently used files, apps and activities. This feature uses policies, which will lock down certain settings.",
-      "Category": "AI",
       "RegistryKey": "Disable_AI_Recall.reg",
       "ApplyText": "Disabling Windows Recall",
       "UndoLabel": "Enable Windows Recall",
@@ -463,8 +147,6 @@
     {
       "FeatureId": "DisableClickToDo",
       "Label": "Disable Click To Do, AI text & image analysis",
-      "ToolTip": "This will disable Click To Do, which provides AI-powered text and image analysis features in Windows. This feature uses policies, which will lock down certain settings.",
-      "Category": "AI",
       "RegistryKey": "Disable_Click_to_Do.reg",
       "ApplyText": "Disabling Click to Do",
       "UndoLabel": "Enable Click To Do, AI text & image analysis",
@@ -476,8 +158,6 @@
     {
       "FeatureId": "DisableAISvcAutoStart",
       "Label": "Prevent AI service from starting automatically",
-      "ToolTip": "This will set the WSAIFabricSvc service to manual startup, preventing the service from starting automatically with Windows.",
-      "Category": "AI",
       "RegistryKey": "Disable_AI_Service_Auto_Start.reg",
       "ApplyText": "Preventing AI service from starting automatically",
       "UndoLabel": "Allow AI service to start automatically",
@@ -489,8 +169,6 @@
     {
       "FeatureId": "DisableDVR",
       "Label": "Disable Xbox game/screen recording",
-      "ToolTip": "This will disable the Xbox game/screen recording features included with the Game Bar app. This feature uses policies, which will lock down certain settings.",
-      "Category": "Gaming",
       "RegistryKey": "Disable_DVR.reg",
       "ApplyText": "Disabling Xbox game/screen recording",
       "UndoLabel": "Enable Xbox game/screen recording",
@@ -502,8 +180,6 @@
     {
       "FeatureId": "DisableGameBarIntegration",
       "Label": "Disable Game Bar integration",
-      "ToolTip": "This will disable the Game Bar integration with games and controllers. This stops annoying ms-gamebar popups when launching games or connecting a controller.",
-      "Category": "Gaming",
       "RegistryKey": "Disable_Game_Bar_Integration.reg",
       "ApplyText": "Disabling Game Bar integration",
       "UndoLabel": "Enable Game Bar integration",
@@ -515,7 +191,6 @@
     {
       "FeatureId": "ClearStart",
       "Label": "Remove all pinned apps from the start menu for the Default user profile, inherited by every new user",
-      "Category": "Start Menu & Search",
       "RegistryKey": null,
       "ApplyText": "Removing all pinned apps from the start menu",
       "UndoLabel": null,
@@ -527,7 +202,6 @@
     {
       "FeatureId": "ReplaceStart",
       "Label": "Replace the start menu layout for the Default user profile, inherited by every new user, with the provided template file",
-      "Category": null,
       "RegistryKey": null,
       "ApplyText": "Replacing the start menu",
       "UndoLabel": null,
@@ -539,8 +213,6 @@
     {
       "FeatureId": "DisableStartRecommended",
       "Label": "Hide recommended section in the start menu",
-      "ToolTip": "This will hide the recommended section in the start menu, which shows recently added apps, recently opened files and app recommendations. This feature uses policies, which will lock down certain settings.",
-      "Category": "Start Menu & Search",
       "RegistryKey": "Disable_Start_Recommended.reg",
       "ApplyText": "Disabling the start menu recommended section",
       "UndoLabel": "Show recommended section in the start menu",
@@ -552,8 +224,6 @@
     {
       "FeatureId": "DisableStartAllApps",
       "Label": "Hide 'All Apps' section in the start menu",
-      "ToolTip": "This will hide the 'All Apps' section in the start menu, which shows all installed apps. WARNING: Hiding this section may make it harder to find installed apps on your system. This feature uses policies, which will lock down certain settings.",
-      "Category": "Start Menu & Search",
       "RegistryKey": "Disable_Start_All_Apps.reg",
       "ApplyText": "Disabling the 'All Apps' section in the start menu",
       "UndoLabel": "Show 'All Apps' section in the start menu",
@@ -565,8 +235,6 @@
     {
       "FeatureId": "DisableStartPhoneLink",
       "Label": "Disable Phone Link integration in the start menu",
-      "ToolTip": "This will remove the Phone Link integration in the start menu when you have a mobile device linked to your PC.",
-      "Category": "Start Menu & Search",
       "RegistryKey": "Disable_Phone_Link_In_Start.reg",
       "ApplyText": "Disabling the Phone Link mobile devices integration in the start menu",
       "UndoLabel": "Enable Phone Link integration in the start menu",
@@ -578,8 +246,6 @@
     {
       "FeatureId": "DisableBing",
       "Label": "Disable Bing web search & Copilot integration in search",
-      "ToolTip": "This will turn off Bing web search results and Copilot integration in the Windows search experience. This feature uses policies, which will lock down certain settings.",
-      "Category": "Start Menu & Search",
       "RegistryKey": "Disable_Bing_Cortana_In_Search.reg",
       "ApplyText": "Disabling Bing web search & Copilot integration in Windows search",
       "UndoLabel": "Enable Bing web search & Copilot integration in search",
@@ -591,8 +257,6 @@
     {
       "FeatureId": "DisableStoreSearchSuggestions",
       "Label": "Disable Microsoft Store app suggestions in search",
-      "ToolTip": "This will disable the Microsoft Store app suggestions in Windows search.",
-      "Category": "Start Menu & Search",
       "RegistryKey": null,
       "ApplyText": "Disabling Microsoft Store app suggestions in search",
       "UndoLabel": "Enable Microsoft Store app suggestions in search",
@@ -604,8 +268,6 @@
     {
       "FeatureId": "DisableSettings365Ads",
       "Label": "Hide Microsoft 365 Copilot ads in Settings Home",
-      "ToolTip": "This will turn off the Microsoft 365 Copilot ads that appear in the Settings Home page.",
-      "Category": "Privacy & Suggested Content",
       "RegistryKey": "Disable_Settings_365_Ads.reg",
       "ApplyText": "Disabling Microsoft 365 Copilot ads in Settings Home",
       "UndoLabel": "Show Microsoft 365 Copilot ads in Settings Home",
@@ -617,8 +279,6 @@
     {
       "FeatureId": "DisableSettingsHome",
       "Label": "Hide Settings 'Home' page",
-      "ToolTip": "Removes the 'Home' page from the Settings app.",
-      "Category": "Other",
       "RegistryKey": "Disable_Settings_Home.reg",
       "ApplyText": "Disabling the Settings Home page",
       "UndoLabel": "Show Settings 'Home' page",
@@ -630,8 +290,6 @@
     {
       "FeatureId": "DisableEdgeAI",
       "Label": "Disable AI features in Microsoft Edge",
-      "ToolTip": "This will turn off AI features in Microsoft Edge, such as the AI-powered sidebar and Copilot features. This feature uses policies, which will lock down certain settings.",
-      "Category": "AI",
       "RegistryKey": "Disable_Edge_AI_Features.reg",
       "ApplyText": "Disabling AI features in Microsoft Edge",
       "UndoLabel": "Enable AI features in Microsoft Edge",
@@ -643,8 +301,6 @@
     {
       "FeatureId": "DisablePaintAI",
       "Label": "Disable AI features in Paint",
-      "ToolTip": "This will turn off AI features in Paint, such as the AI-powered image generation and editing tools. This feature uses policies, which will lock down certain settings.",
-      "Category": "AI",
       "RegistryKey": "Disable_Paint_AI_Features.reg",
       "ApplyText": "Disabling AI features in Paint",
       "UndoLabel": "Enable AI features in Paint",
@@ -656,8 +312,6 @@
     {
       "FeatureId": "DisableNotepadAI",
       "Label": "Disable AI features in Notepad",
-      "ToolTip": "This will turn off AI features in Notepad, such as the AI-powered writing suggestions. This feature uses policies, which will lock down certain settings.",
-      "Category": "AI",
       "RegistryKey": "Disable_Notepad_AI_Features.reg",
       "ApplyText": "Disabling AI features in Notepad",
       "UndoLabel": "Enable AI features in Notepad",
@@ -669,8 +323,6 @@
     {
       "FeatureId": "EnableDarkMode",
       "Label": "Enable dark theme for system and apps",
-      "ToolTip": "This will set the app and system theme to dark mode.",
-      "Category": "Appearance",
       "RegistryKey": "Enable_Dark_Mode.reg",
       "ApplyText": "Enabling dark mode for system and apps",
       "UndoLabel": "Disable dark theme for system and apps",
@@ -682,8 +334,6 @@
     {
       "FeatureId": "DisableDragTray",
       "Label": "Disable 'Drag Tray' for sharing & moving files",
-      "ToolTip": "The Drag Tray is a new feature for sharing & moving files in Windows 11, it appears at the top of the screen when dragging files.",
-      "Category": "System",
       "RegistryKey": "Disable_Share_Drag_Tray.reg",
       "ApplyText": "Disabling Drag Tray",
       "UndoLabel": "Enable 'Drag Tray' for sharing & moving files",
@@ -695,8 +345,6 @@
     {
       "FeatureId": "RevertContextMenu",
       "Label": "Use classic Windows 10 context menu style",
-      "ToolTip": "This will restore the classic Windows 10 style context menu, which is normally hidden behind the 'Show more options' entry in the new Windows 11 context menu.",
-      "Category": "System",
       "RegistryKey": "Disable_Show_More_Options_Context_Menu.reg",
       "ApplyText": "Restoring the classic Windows 10 style context menu",
       "UndoLabel": "Use Windows 11 context menu style",
@@ -708,37 +356,28 @@
     {
       "FeatureId": "DisableMouseAcceleration",
       "Label": "Disable Enhance Pointer Precision (mouse acceleration)",
-      "ToolTip": "This will disable mouse acceleration which is enabled by default in Windows. This makes mouse movement more consistent and predictable.",
-      "Category": "System",
       "RegistryKey": "Disable_Enhance_Pointer_Precision.reg",
       "ApplyText": "Turning off Enhanced Pointer Precision",
       "UndoLabel": "Enable Enhance Pointer Precision (mouse acceleration)",
       "ApplyUndoText": "Turning on Enhanced Pointer Precision",
       "RegistryUndoKey": "Enable_Enhance_Pointer_Precision.reg",
-      "RequiresReboot": true,
       "MinVersion": null,
       "MaxVersion": null
     },
     {
       "FeatureId": "DisableStickyKeys",
       "Label": "Disable Sticky Keys keyboard shortcut (5x shift)",
-      "ToolTip": "This will prevent the Sticky Keys dialog from appearing when you press the Shift key 5 times in a row.",
-      "Category": "System",
       "RegistryKey": "Disable_Sticky_Keys_Shortcut.reg",
       "ApplyText": "Disabling the Sticky Keys keyboard shortcut",
       "UndoLabel": "Enable Sticky Keys keyboard shortcut (5x shift)",
       "ApplyUndoText": "Enabling the Sticky Keys keyboard shortcut",
       "RegistryUndoKey": "Enable_Sticky_Keys_Shortcut.reg",
-      "RequiresReboot": true,
       "MinVersion": 26100,
       "MaxVersion": null
     },
     {
       "FeatureId": "DisableWindowSnapping",
       "Label": "Disable window snapping",
-      "ToolTip": "This will turn off the ability to snap windows to the sides or corners of the screen.",
-      "Category": "Multi-tasking",
-      "Priority": 1,
       "RegistryKey": "Disable_Window_Snapping.reg",
       "ApplyText": "Disabling window snapping",
       "UndoLabel": "Enable window snapping",
@@ -750,9 +389,6 @@
     {
       "FeatureId": "DisableSnapAssist",
       "Label": "Disable showing app suggestions when snapping windows",
-      "ToolTip": "This will turn off app suggestions when you snap windows to the sides or corners of the screen.",
-      "Category": "Multi-tasking",
-      "Priority": 2,
       "RegistryKey": "Disable_Snap_Assist.reg",
       "ApplyText": "Disabling the Snap Assist suggestions",
       "UndoLabel": "Enable showing app suggestions when snapping windows",
@@ -764,9 +400,6 @@
     {
       "FeatureId": "DisableSnapLayouts",
       "Label": "Hide snap layout flyout at top of screen and on maximize button",
-      "ToolTip": "This will turn off the snap layout flyout that appears when you hover over the maximize button or drag windows to the top of the screen.",
-      "Category": "Multi-tasking",
-      "Priority": 3,
       "RegistryKey": "Disable_Snap_Layouts.reg",
       "ApplyText": "Hiding snap layouts when dragging windows to top of the screen and on maximize button",
       "UndoLabel": "Show snap layout flyout at top of screen and on maximize button",
@@ -778,7 +411,6 @@
     {
       "FeatureId": "HideTabsInAltTab",
       "Label": "Hide tabs from apps when snapping or pressing Alt+Tab",
-      "Category": "Multi-tasking",
       "RegistryKey": "Hide_Tabs_In_Alt_Tab.reg",
       "ApplyText": "Disable showing tabs from apps when snapping or pressing Alt+Tab",
       "UndoLabel": null,
@@ -790,7 +422,6 @@
     {
       "FeatureId": "Show3TabsInAltTab",
       "Label": "Show 3 tabs from apps when snapping or pressing Alt+Tab",
-      "Category": "Multi-tasking",
       "RegistryKey": "Show_3_Tabs_In_Alt_Tab.reg",
       "ApplyText": "Enable showing 3 tabs from apps when snapping or pressing Alt+Tab",
       "UndoLabel": null,
@@ -802,7 +433,6 @@
     {
       "FeatureId": "Show5TabsInAltTab",
       "Label": "Show 5 tabs from apps when snapping or pressing Alt+Tab",
-      "Category": "Multi-tasking",
       "RegistryKey": "Show_5_Tabs_In_Alt_Tab.reg",
       "ApplyText": "Enable showing 5 tabs from apps when snapping or pressing Alt+Tab",
       "UndoLabel": null,
@@ -814,7 +444,6 @@
     {
       "FeatureId": "Show20TabsInAltTab",
       "Label": "Show 20 tabs from apps when snapping or pressing Alt+Tab",
-      "Category": "Multi-tasking",
       "RegistryKey": "Show_20_Tabs_In_Alt_Tab.reg",
       "ApplyText": "Enable showing 20 tabs from apps when snapping or pressing Alt+Tab",
       "UndoLabel": null,
@@ -826,9 +455,6 @@
     {
       "FeatureId": "TaskbarAlignLeft",
       "Label": "Align taskbar to the left",
-      "ToolTip": "By default, Windows 11 has the taskbar buttons centered. Enabling this setting will move the taskbar buttons to the left, similar to previous versions of Windows.",
-      "Category": "Taskbar",
-      "Priority": 1,
       "RegistryKey": "Align_Taskbar_Left.reg",
       "ApplyText": "Aligning taskbar buttons to the left",
       "UndoLabel": "Align taskbar to the center",
@@ -840,7 +466,6 @@
     {
       "FeatureId": "HideSearchTb",
       "Label": "Hide search icon from the taskbar",
-      "Category": "Taskbar",
       "RegistryKey": "Hide_Search_Taskbar.reg",
       "ApplyText": "Hiding the search icon from the taskbar",
       "UndoLabel": "Show search box on the taskbar",
@@ -852,7 +477,6 @@
     {
       "FeatureId": "ShowSearchIconTb",
       "Label": "Show search icon on the taskbar",
-      "Category": "Taskbar",
       "RegistryKey": "Show_Search_Icon.reg",
       "ApplyText": "Changing taskbar search to icon only",
       "UndoLabel": "Show search box on the taskbar",
@@ -864,7 +488,6 @@
     {
       "FeatureId": "ShowSearchLabelTb",
       "Label": "Show search icon with label on the taskbar",
-      "Category": "Taskbar",
       "RegistryKey": "Show_Search_Icon_And_Label.reg",
       "ApplyText": "Changing taskbar search to icon with label",
       "UndoLabel": "Show search box on the taskbar",
@@ -876,7 +499,6 @@
     {
       "FeatureId": "ShowSearchBoxTb",
       "Label": "Show search box on the taskbar",
-      "Category": "Taskbar",
       "RegistryKey": "Show_Search_Box.reg",
       "ApplyText": "Changing taskbar search to search box",
       "UndoLabel": null,
@@ -888,9 +510,6 @@
     {
       "FeatureId": "HideTaskview",
       "Label": "Hide 'Task view' button on the taskbar",
-      "ToolTip": "This will disable the 'Task view' button on the taskbar, which allows you to see all your open windows and virtual desktops.",
-      "Category": "Taskbar",
-      "Priority": 3,
       "RegistryKey": "Hide_Taskview_Taskbar.reg",
       "ApplyText": "Hiding the taskview button from the taskbar",
       "UndoLabel": "Show 'Task view' button on the taskbar",
@@ -902,24 +521,17 @@
     {
       "FeatureId": "DisableWidgets",
       "Label": "Disable widgets on the taskbar & lock screen",
-      "ToolTip": "This will disable the widgets features in Windows, including the widgets button on the taskbar and the widgets that can appear on the lock screen.",
-      "Category": "Taskbar",
-      "Priority": 4,
       "RegistryKey": null,
       "ApplyText": "Disabling widgets on the taskbar & lock screen",
       "UndoLabel": null,
       "ApplyUndoText": null,
       "RegistryUndoKey": null,
-      "DisableWhenApplied": true,
       "MinVersion": null,
       "MaxVersion": null
     },
     {
       "FeatureId": "HideChat",
       "Label": "Hide Chat (meet now) icon on the taskbar",
-      "ToolTip": "This will disable the Chat (meet now) icon on the taskbar.",
-      "Category": "Taskbar",
-      "Priority": 5,
       "RegistryKey": "Disable_Chat_Taskbar.reg",
       "ApplyText": "Hiding the chat icon from the taskbar",
       "UndoLabel": "Show Chat (meet now) icon on the taskbar",
@@ -931,8 +543,6 @@
     {
       "FeatureId": "DisableStorageSense",
       "Label": "Disable Storage Sense automatic disk cleanup",
-      "ToolTip": "This will disable Storage Sense, which automatically frees up disk space by deleting temporary files, emptying the recycle bin and cleaning up files in the Downloads folder.",
-      "Category": "System",
       "RegistryKey": "Disable_Storage_Sense.reg",
       "ApplyText": "Disabling Storage Sense automatic disk cleanup",
       "UndoLabel": "Enable Storage Sense automatic disk cleanup",
@@ -944,8 +554,6 @@
     {
       "FeatureId": "DisableFastStartup",
       "Label": "Disable fast start-up",
-      "ToolTip": "Fast Start-up helps your PC start faster after shutdown by saving a system image to disk. Disabling Fast Start-up can help with certain issues, but may result in slightly longer boot times.",
-      "Category": "System",
       "RegistryKey": "Disable_Fast_Startup.reg",
       "ApplyText": "Disabling Fast Start-up",
       "UndoLabel": "Enable fast start-up",
@@ -957,8 +565,6 @@
     {
       "FeatureId": "DisableBitlockerAutoEncryption",
       "Label": "Disable BitLocker automatic device encryption",
-      "ToolTip": "For devices that support it, Windows 11 automatically enables BitLocker device encryption. Disabling this will turn off automatic encryption of the device, but you can still manually enable BitLocker encryption if desired. Drives that are already encrypted with BitLocker will remain encrypted when this setting is applied.",
-      "Category": "System",
       "RegistryKey": "Disable_Bitlocker_Auto_Encryption.reg",
       "ApplyText": "Disabling BitLocker automatic device encryption",
       "UndoLabel": "Enable BitLocker automatic device encryption",
@@ -970,8 +576,6 @@
     {
       "FeatureId": "DisableModernStandbyNetworking",
       "Label": "Disable Modern Standby network connectivity",
-      "ToolTip": "By default, devices that support Modern Standby maintain network connectivity while in sleep mode. Disabling network connectivity during Modern Standby can help save battery life.",
-      "Category": "System",
       "RegistryKey": "Disable_Modern_Standby_Networking.reg",
       "ApplyText": "Disabling network connectivity during Modern Standby",
       "UndoLabel": "Enable Modern Standby network connectivity",
@@ -983,9 +587,6 @@
     {
       "FeatureId": "EnableEndTask",
       "Label": "Show 'End Task' option in taskbar context menu",
-      "ToolTip": "When enabled, adds an 'End Task' option to the right-click context menu for apps in the taskbar, allowing you to quickly force close apps.",
-      "Category": "Taskbar",
-      "Priority": 6,
       "RegistryKey": "Enable_End_Task.reg",
       "ApplyText": "Enabling the 'End Task' option in the taskbar right click menu",
       "UndoLabel": "Hide 'End Task' option in taskbar context menu",
@@ -997,9 +598,6 @@
     {
       "FeatureId": "EnableLastActiveClick",
       "Label": "Enable 'Last Active Click' behavior for taskbar apps",
-      "ToolTip": "When enabled, clicking on an app in the taskbar will switch to the last active window of that app, instead of only showing the thumbnail preview.",
-      "Category": "Taskbar",
-      "Priority": 7,
       "RegistryKey": "Enable_Last_Active_Click.reg",
       "ApplyText": "Enabling the 'Last Active Click' behavior in the taskbar app area",
       "UndoLabel": "Disable 'Last Active Click' behavior for taskbar apps",
@@ -1011,7 +609,6 @@
     {
       "FeatureId": "CombineTaskbarAlways",
       "Label": "Always combine taskbar buttons and hide labels for the main display",
-      "Category": "Taskbar",
       "RegistryKey": "Combine_Taskbar_Always.reg",
       "ApplyText": "Setting the taskbar on the main display to always combine buttons and hide labels",
       "UndoLabel": null,
@@ -1023,7 +620,6 @@
     {
       "FeatureId": "CombineMMTaskbarAlways",
       "Label": "Always combine taskbar buttons and hide labels for secondary displays",
-      "Category": "Taskbar",
       "RegistryKey": "Combine_MMTaskbar_Always.reg",
       "ApplyText": "Setting the taskbar on secondary displays to always combine buttons and hide labels",
       "UndoLabel": null,
@@ -1035,7 +631,6 @@
     {
       "FeatureId": "CombineTaskbarWhenFull",
       "Label": "Combine taskbar buttons and hide labels when taskbar is full for the main display",
-      "Category": "Taskbar",
       "RegistryKey": "Combine_Taskbar_When_Full.reg",
       "ApplyText": "Setting the taskbar on the main display to only combine buttons and hide labels when the taskbar is full",
       "UndoLabel": "Always combine taskbar buttons and hide labels for the main display",
@@ -1047,7 +642,6 @@
     {
       "FeatureId": "CombineMMTaskbarWhenFull",
       "Label": "Combine taskbar buttons and hide labels when taskbar is full for secondary displays",
-      "Category": "Taskbar",
       "RegistryKey": "Combine_MMTaskbar_When_Full.reg",
       "ApplyText": "Setting the taskbar on secondary displays to only combine buttons and hide labels when the taskbar is full",
       "UndoLabel": "Always combine taskbar buttons and hide labels for secondary displays",
@@ -1059,7 +653,6 @@
     {
       "FeatureId": "CombineTaskbarNever",
       "Label": "Never combine taskbar buttons and show labels for the main display",
-      "Category": "Taskbar",
       "RegistryKey": "Combine_Taskbar_Never.reg",
       "ApplyText": "Setting the taskbar on the main display to never combine buttons or hide labels",
       "UndoLabel": "Always combine taskbar buttons and hide labels for the main display",
@@ -1071,7 +664,6 @@
     {
       "FeatureId": "CombineMMTaskbarNever",
       "Label": "Never combine taskbar buttons and show labels for secondary displays",
-      "Category": "Taskbar",
       "RegistryKey": "Combine_MMTaskbar_Never.reg",
       "ApplyText": "Setting the taskbar on secondary displays to never combine buttons or hide labels",
       "UndoLabel": "Always combine taskbar buttons and hide labels for secondary displays",
@@ -1083,7 +675,6 @@
     {
       "FeatureId": "MMTaskbarModeAll",
       "Label": "Show app icons on all taskbars",
-      "Category": "Taskbar",
       "RegistryKey": "MMTaskbarMode_All.reg",
       "ApplyText": "Setting the taskbar to show app icons on all taskbars",
       "UndoLabel": null,
@@ -1095,7 +686,6 @@
     {
       "FeatureId": "MMTaskbarModeMainActive",
       "Label": "Show app icons on main taskbar and on taskbar where the windows is open",
-      "Category": "Taskbar",
       "RegistryKey": "MMTaskbarMode_Main_Active.reg",
       "ApplyText": "Setting the taskbar to show app icons on main taskbar and on taskbar where the windows is open",
       "UndoLabel": "Show app icons on all taskbars",
@@ -1107,7 +697,6 @@
     {
       "FeatureId": "MMTaskbarModeActive",
       "Label": "Show app icons only on taskbar where the window is open",
-      "Category": "Taskbar",
       "RegistryKey": "MMTaskbarMode_Active.reg",
       "ApplyText": "Setting the taskbar to only show app icons on the taskbar where the window is open",
       "UndoLabel": "Show app icons on all taskbars",
@@ -1119,7 +708,6 @@
     {
       "FeatureId": "ExplorerToHome",
       "Label": "Change the default location that File Explorer opens to 'Home'",
-      "Category": "File Explorer",
       "RegistryKey": "Launch_File_Explorer_To_Home.reg",
       "ApplyText": "Changing the default location that File Explorer opens to, to 'Home'",
       "UndoLabel": null,
@@ -1131,7 +719,6 @@
     {
       "FeatureId": "ExplorerToThisPC",
       "Label": "Change the default location that File Explorer opens to 'This PC'",
-      "Category": "File Explorer",
       "RegistryKey": "Launch_File_Explorer_To_This_PC.reg",
       "ApplyText": "Changing the default location that File Explorer opens to, to 'This PC'",
       "UndoLabel": "Change the default location that File Explorer opens to 'Home'",
@@ -1143,7 +730,6 @@
     {
       "FeatureId": "ExplorerToDownloads",
       "Label": "Change the default location that File Explorer opens to 'Downloads'",
-      "Category": "File Explorer",
       "RegistryKey": "Launch_File_Explorer_To_Downloads.reg",
       "ApplyText": "Changing the default location that File Explorer opens to, to 'Downloads'",
       "UndoLabel": "Change the default location that File Explorer opens to 'Home'",
@@ -1155,7 +741,6 @@
     {
       "FeatureId": "ExplorerToOneDrive",
       "Label": "Change the default location that File Explorer opens to 'OneDrive'",
-      "Category": "File Explorer",
       "RegistryKey": "Launch_File_Explorer_To_OneDrive.reg",
       "ApplyText": "Changing the default location that File Explorer opens to, to 'OneDrive'",
       "UndoLabel": "Change the default location that File Explorer opens to 'Home'",
@@ -1167,9 +752,6 @@
     {
       "FeatureId": "ShowKnownFileExt",
       "Label": "Show file extensions for known file types",
-      "ToolTip": "This will show file extensions for known file types. By default, Windows hides file extensions for known file types which can lead to confusion and security risks.",
-      "Category": "File Explorer",
-      "Priority": 2,
       "RegistryKey": "Show_Extensions_For_Known_File_Types.reg",
       "ApplyText": "Enabling file extensions for known file types",
       "UndoLabel": "Hide file extensions for known file types",
@@ -1181,9 +763,6 @@
     {
       "FeatureId": "ShowHiddenFolders",
       "Label": "Show hidden files, folders and drives",
-      "ToolTip": "By default, Windows hides certain files, folders and drives to prevent accidental modification or deletion. Turn this on to show all files in File Explorer.",
-      "Category": "File Explorer",
-      "Priority": 3,
       "RegistryKey": "Show_Hidden_Folders.reg",
       "ApplyText": "Unhiding hidden files, folders and drives",
       "UndoLabel": "Hide hidden files, folders and drives",
@@ -1195,9 +774,6 @@
     {
       "FeatureId": "HideDupliDrive",
       "Label": "Hide duplicate removable drive entries",
-      "ToolTip": "By default, Windows shows removable drives both under 'This PC' and in the navigation pane with its own entry. Enable this setting to only show removable drives under 'This PC'.",
-      "Category": "File Explorer",
-      "Priority": 4,
       "RegistryKey": "Hide_duplicate_removable_drives_from_navigation_pane_of_File_Explorer.reg",
       "ApplyText": "Hiding duplicate removable drive entries from the File Explorer navigation pane",
       "UndoLabel": "Show duplicate removable drive entries",
@@ -1209,9 +785,6 @@
     {
       "FeatureId": "HideHome",
       "Label": "Hide 'Home' from navigation pane",
-      "ToolTip": "Hides the 'Home' section from the File Explorer navigation pane.",
-      "Category": "File Explorer",
-      "Priority": 5,
       "RegistryKey": "Hide_Home_from_Explorer.reg",
       "ApplyText": "Hiding the 'Home' section from the File Explorer navigation pane",
       "UndoLabel": "Show 'Home' from navigation pane",
@@ -1223,9 +796,6 @@
     {
       "FeatureId": "HideGallery",
       "Label": "Hide 'Gallery' from navigation pane",
-      "ToolTip": "Hides the 'Gallery' section from the File Explorer navigation pane.",
-      "Category": "File Explorer",
-      "Priority": 6,
       "RegistryKey": "Hide_Gallery_from_Explorer.reg",
       "ApplyText": "Hiding the 'Gallery' section from the File Explorer navigation pane",
       "UndoLabel": "Show 'Gallery' from navigation pane",
@@ -1237,8 +807,6 @@
     {
       "FeatureId": "DisableTransparency",
       "Label": "Disable transparency effects",
-      "ToolTip": "This will disable transparency effects on Windows and interfaces. Which can help improve performance on older hardware.",
-      "Category": "Appearance",
       "RegistryKey": "Disable_Transparency.reg",
       "ApplyText": "Disabling transparency effects",
       "UndoLabel": "Enable transparency effects",
@@ -1250,22 +818,17 @@
     {
       "FeatureId": "DisableAnimations",
       "Label": "Disable animations and visual effects",
-      "ToolTip": "This will disable animations and some visual effects in Windows, which can make the interface feel snappier, especially on older hardware.",
-      "Category": "Appearance",
       "RegistryKey": "Disable_Animations.reg",
       "ApplyText": "Disabling animations and visual effects",
       "UndoLabel": "Enable animations and visual effects",
       "ApplyUndoText": "Enabling animations and visual effects",
       "RegistryUndoKey": "Enable_Animations.reg",
-      "RequiresReboot": true,
       "MinVersion": null,
       "MaxVersion": null
     },
     {
       "FeatureId": "DisableUpdateASAP",
       "Label": "Prevent getting updates as soon as they're available",
-      "ToolTip": "This will prevent your PC from being among the first to receive new non-security updates. Your PC will still receive these updates eventually.",
-      "Category": "Windows Update",
       "RegistryKey": "Disable_Update_ASAP.reg",
       "ApplyText": "Preventing Windows from getting updates as soon as they are available",
       "UndoLabel": "Allow getting updates as soon as they're available",
@@ -1277,8 +840,6 @@
     {
       "FeatureId": "PreventUpdateAutoReboot",
       "Label": "Prevent automatic restarts after updates while signed in",
-      "ToolTip": "This will prevent your PC from automatically restarting after updates while any user is signed in.",
-      "Category": "Windows Update",
       "RegistryKey": "Prevent_Auto_Reboot.reg",
       "ApplyText": "Preventing automatic restarts after updates while signed in",
       "UndoLabel": "Allow automatic restarts after updates while signed in",
@@ -1290,8 +851,6 @@
     {
       "FeatureId": "DisableDeliveryOptimization",
       "Label": "Disable sharing downloaded updates with other PCs",
-      "ToolTip": "This will prevent your PC from sharing downloaded updates with other PCs on the local network or on the internet. This also prevents your PC from downloading updates from other PCs.",
-      "Category": "Windows Update",
       "RegistryKey": "Disable_Delivery_Optimization.reg",
       "ApplyText": "Disabling sharing of downloaded updates with other PCs",
       "UndoLabel": "Enable sharing downloaded updates with other PCs",
@@ -1303,7 +862,6 @@
     {
       "FeatureId": "ForceRemoveEdge",
       "Label": "Forcefully uninstall Microsoft Edge. NOT RECOMMENDED!",
-      "Category": null,
       "RegistryKey": null,
       "ApplyText": "Forcefully uninstalling Microsoft Edge",
       "UndoLabel": null,
@@ -1315,9 +873,6 @@
     {
       "FeatureId": "HideOnedrive",
       "Label": "Hide 'OneDrive' from navigation pane",
-      "ToolTip": "Hides the 'OneDrive' section from the File Explorer navigation pane.",
-      "Category": "File Explorer",
-      "Priority": 7,
       "RegistryKey": "Hide_Onedrive_Folder.reg",
       "ApplyText": "Hiding the 'OneDrive' section from the File Explorer navigation pane",
       "UndoLabel": "Show 'OneDrive' from navigation pane",
@@ -1329,9 +884,6 @@
     {
       "FeatureId": "Hide3dObjects",
       "Label": "Hide '3D objects' folder under 'This PC'",
-      "ToolTip": "Hides the '3D objects' folder from the File Explorer navigation pane.",
-      "Category": "File Explorer",
-      "Priority": 8,
       "RegistryKey": "Hide_3D_Objects_Folder.reg",
       "ApplyText": "Hiding the '3D objects' folder from the File Explorer navigation pane",
       "UndoLabel": "Show '3D objects' folder under 'This PC'",
@@ -1343,9 +895,6 @@
     {
       "FeatureId": "HideMusic",
       "Label": "Hide 'Music' folder under 'This PC'",
-      "ToolTip": "Hides the 'Music' folder from the File Explorer navigation pane.",
-      "Category": "File Explorer",
-      "Priority": 9,
       "RegistryKey": "Hide_Music_Folder.reg",
       "ApplyText": "Hiding the 'Music' folder from the File Explorer navigation pane",
       "UndoLabel": "Show 'Music' folder under 'This PC'",
@@ -1357,9 +906,6 @@
     {
       "FeatureId": "AddFoldersToThisPC",
       "Label": "Add common folders back to 'This PC' page",
-      "ToolTip": "This setting will add common folders like Desktop, Documents, Downloads, Music, Pictures and Videos back to the 'This PC' page in File Explorer.",
-      "Category": "File Explorer",
-      "Priority": 10,
       "RegistryKey": "Add_All_Folders_Under_This_PC.reg",
       "ApplyText": "Adding all common folders (Desktop, Downloads, etc.) back to 'This PC' in File Explorer",
       "UndoLabel": "Remove common folders back to 'This PC' page",
@@ -1371,9 +917,6 @@
     {
       "FeatureId": "HideIncludeInLibrary",
       "Label": "Hide 'Include in library' option in the context menu",
-      "ToolTip": "Hides the 'Include in library' option from the File Explorer context menu.",
-      "Category": "File Explorer",
-      "Priority": 11,
       "RegistryKey": "Disable_Include_in_library_from_context_menu.reg",
       "ApplyText": "Hiding 'Include in library' in the context menu",
       "UndoLabel": "Show 'Include in library' option in the context menu",
@@ -1385,9 +928,6 @@
     {
       "FeatureId": "HideGiveAccessTo",
       "Label": "Hide 'Give access to' option in the context menu",
-      "ToolTip": "Hides the 'Give access to' option from the File Explorer context menu.",
-      "Category": "File Explorer",
-      "Priority": 12,
       "RegistryKey": "Disable_Give_access_to_context_menu.reg",
       "ApplyText": "Hiding 'Give access to' in the context menu",
       "UndoLabel": "Show 'Give access to' option in the context menu",
@@ -1399,9 +939,6 @@
     {
       "FeatureId": "HideShare",
       "Label": "Hide 'Share' option in the context menu",
-      "ToolTip": "Hides the 'Share' option from the File Explorer context menu.",
-      "Category": "File Explorer",
-      "Priority": 13,
       "RegistryKey": "Disable_Share_from_context_menu.reg",
       "ApplyText": "Hiding 'Share' in the context menu",
       "UndoLabel": "Show 'Share' option in the context menu",
@@ -1413,8 +950,6 @@
     {
       "FeatureId": "DisableBraveBloat",
       "Label": "Disable bloat in Brave browser (AI, Crypto, etc.)",
-      "ToolTip": "This will disable Brave's built-in AI features, Crypto wallet, News, Rewards, Talk and VPN. This feature uses policies, which will lock down certain settings.",
-      "Category": "Other",
       "RegistryKey": "Disable_Brave_Bloat.reg",
       "ApplyText": "Disabling Brave AI, Crypto, News, Rewards, Talk and VPN in Brave browser",
       "UndoLabel": "Enable Brave browser features (AI, Crypto, etc.)",
@@ -1426,36 +961,28 @@
     {
       "FeatureId": "EnableWindowsSandbox",
       "Label": "Enable Windows Sandbox",
-      "ToolTip": "Windows Sandbox is a lightweight desktop environment for safely running applications in isolation. Software installed inside the Windows Sandbox environment remains 'sandboxed' and runs separately from the host machine. Only supported on Windows 11 Pro, Workstation, and Enterprise editions.",
-      "Category": "Optional Windows Features",
       "RegistryKey": null,
       "ApplyText": "Enabling Windows Sandbox",
       "UndoLabel": "Disable Windows Sandbox",
       "ApplyUndoText": "Disabling Windows Sandbox",
       "RegistryUndoKey": null,
-      "RequiresReboot": true,
       "MinVersion": 22483,
       "MaxVersion": null
     },
     {
       "FeatureId": "EnableWindowsSubsystemForLinux",
       "Label": "Enable Windows Subsystem for Linux",
-      "ToolTip": "Windows Subsystem for Linux allows you to run a Linux environment directly on Windows without the need for a virtual machine.",
-      "Category": "Optional Windows Features",
       "RegistryKey": null,
       "ApplyText": "Enabling Windows Subsystem for Linux",
       "UndoLabel": "Disable Windows Subsystem for Linux",
       "ApplyUndoText": "Disabling Windows Subsystem for Linux",
       "RegistryUndoKey": null,
-      "RequiresReboot": true,
       "MinVersion": 22000,
       "MaxVersion": null
     },
     {
       "FeatureId": "ShowDriveLettersFirst",
       "Label": "Show drive letters before drive label",
-      "ToolTip": "This setting will show drive letters before the drive label in File Explorer.",
-      "Category": "File Explorer",
       "RegistryKey": "Show_Drive_Letters_First.reg",
       "ApplyText": "Showing drive letters before drive label",
       "UndoLabel": "Show drive letters after drive label",
@@ -1467,8 +994,6 @@
     {
       "FeatureId": "ShowDriveLettersLast",
       "Label": "Show drive letters after drive label",
-      "ToolTip": "This setting will show drive letters after the drive label in File Explorer (Default Windows behavior).",
-      "Category": "File Explorer",
       "RegistryKey": "Show_Drive_Letters_Last.reg",
       "ApplyText": "Showing drive letters after drive label",
       "UndoLabel": null,
@@ -1480,8 +1005,6 @@
     {
       "FeatureId": "ShowNetworkDriveLettersFirst",
       "Label": "Show network drive letters before drive label",
-      "ToolTip": "This setting will show only network drive letters before the drive label in File Explorer.",
-      "Category": "File Explorer",
       "RegistryKey": "Show_Network_Drive_Letters_First.reg",
       "ApplyText": "Showing network drive letters before drive label",
       "UndoLabel": "Show drive letters after drive label",
@@ -1493,8 +1016,6 @@
     {
       "FeatureId": "HideDriveLetters",
       "Label": "Hide all drive letters",
-      "ToolTip": "This setting will hide all drive letters from the File Explorer navigation pane and 'This PC'.",
-      "Category": "File Explorer",
       "RegistryKey": "Hide_Drive_Letters.reg",
       "ApplyText": "Hiding all drive letters",
       "UndoLabel": "Show drive letters after drive label",
@@ -1506,8 +1027,6 @@
     {
       "FeatureId": "StartAllAppsCategory",
       "Label": "Show All Apps in Category view (Default)",
-      "ToolTip": "This will set the All Apps section in the start menu to show apps grouped by category.",
-      "Category": "Start Menu & Search",
       "RegistryKey": "Start_AllApps_Category.reg",
       "ApplyText": "Setting All Apps view to Category",
       "UndoLabel": null,
@@ -1519,8 +1038,6 @@
     {
       "FeatureId": "StartAllAppsGrid",
       "Label": "Show All Apps in Grid view",
-      "ToolTip": "This will set the All Apps section in the start menu to show apps in an alphabetical grid layout.",
-      "Category": "Start Menu & Search",
       "RegistryKey": "Start_AllApps_Grid.reg",
       "ApplyText": "Setting All Apps view to Grid",
       "UndoLabel": "Show All Apps in Category view",
@@ -1532,8 +1049,6 @@
     {
       "FeatureId": "StartAllAppsList",
       "Label": "Show All Apps in List view",
-      "ToolTip": "This will set the All Apps section in the start menu to show apps in an alphabetical list layout.",
-      "Category": "Start Menu & Search",
       "RegistryKey": "Start_AllApps_List.reg",
       "ApplyText": "Setting All Apps view to List",
       "UndoLabel": "Show All Apps in Category view",

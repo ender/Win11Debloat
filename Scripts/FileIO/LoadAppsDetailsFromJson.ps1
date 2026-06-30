@@ -53,9 +53,7 @@ function LoadAppsDetailsFromJson {
             FriendlyName = $friendlyName
             DisplayName = $displayName
             IsChecked = $isChecked
-            Description = $appData.Description
             SelectedByDefault = $appData.SelectedByDefault
-            Recommendation = $appData.Recommendation
             RemovalMethod = if ($appData.RemovalMethod -and $appData.RemovalMethod -eq 'WinGet') { 'WinGet' } else { 'Appx' }
         }
     }

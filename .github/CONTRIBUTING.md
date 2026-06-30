@@ -94,7 +94,6 @@ Win11Debloat/
 - Keep lines reasonable in length
 - Use descriptive variable names
 - Try to limit your indentation to a max of 4-5 levels, if possible.
-- Use [Segoe Fluent Icon Assets](https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font) for icons.
 
 ### Common Pitfalls
 
@@ -178,16 +177,11 @@ Add your feature to the `"Features"` array in `Config/Features.json`:
 {
   "FeatureId": "YourFeatureId",
   "Label": "Short label describing the feature",
-  "ToolTip": "Detailed explanation of what this feature does and its impact.",
-  "Category": "Privacy & Suggested Content",
-  "Priority": 1,
   "RegistryKey": "Disable_YourFeature.reg",
   "ApplyText": "Disabling your feature",
   "UndoLabel": "Short description for the undo",
   "ApplyUndoText": "Enabling your feature",
   "RegistryUndoKey": "Enable_YourFeature.reg",
-  "RequiresReboot": false,
-  "DisableWhenApplied": false,
   "MinVersion": null,
   "MaxVersion": null
 }
@@ -196,17 +190,12 @@ Add your feature to the `"Features"` array in `Config/Features.json`:
 **Field Descriptions**:
 
 - `FeatureId`: Unique identifier, this must match parameter name in the Win11Debloat.ps1 and Get.ps1 files.
-- `Label`: Short description shown in change summaries and wiki documentation.
-- `ToolTip`: Detailed explanation of what the feature does, used in wiki documentation.
-- `Category`: One of the predefined categories (see Categories array in Features.json), used to organize the wiki documentation. This field is unused by this fork's CLI but is kept for compatibility with upstream.
-- `Priority`: Optional. The priority value (int) is used to sort features within a category. If this field is omitted the feature will be sorted based on the order in the Features.json file.
+- `Label`: Short description shown in change summaries.
 - `RegistryKey`: Filename of the registry file to apply (in Regfiles/ directory) or null if feature does not require registry changes.
 - `ApplyText`: Message shown when applying the feature.
-- `UndoLabel`: Short description for the undo shown in the UI.
+- `UndoLabel`: Short description for the undo.
 - `ApplyUndoText`: Message shown when undoing the feature.
 - `RegistryUndoKey`: Filename of the registry file to revert changes or null if feature does not require registry changes.
-- `RequiresReboot`: Optional boolean. Set to `true` if the feature requires a system reboot to take effect.
-- `DisableWhenApplied`: Optional boolean. Set to `true` if the feature has no supported undo method.
 - `MinVersion`: Minimum Windows build version (e.g., "22000") or null.
 - `MaxVersion`: Maximum Windows version or null.
 
@@ -266,46 +255,6 @@ To add your feature to the default preset, edit `Config/DefaultSettings.json` an
     {
       "Name": "YourFeatureId",
       "Value": true
-    }
-  ]
-}
-```
-
-### Adding a Category
-
-To add a new category for organizing features:
-
-- Add a new category entry to the `"Categories"` array in `Config/Features.json`:
-
-  ```json
-  {
-    "Name": "Your Category Name",
-    "Icon": "&#xE#### ;"
-  }
-  ```
-
-> [!TIP]
-> Use [Segoe Fluent Icon Assets](https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font) for icon codes.
-
-### Adding UI Groups
-
-UI Groups describe a set of mutually exclusive feature options (e.g. taskbar alignment: left/center). This metadata is unused by this fork's CLI but is kept for compatibility with upstream:
-
-```json
-{
-  "GroupId": "UniqueGroupId",
-  "Label": "Display label for the group",
-  "ToolTip": "Explanation of what this group controls",
-  "Category": "Category Name",
-  "Priority": 1,
-  "Values": [
-    {
-      "Label": "Option 1",
-      "FeatureIds": ["FeatureId1"]
-    },
-    {
-      "Label": "Option 2",
-      "FeatureIds": ["FeatureId2"]
     }
   ]
 }
