@@ -1,6 +1,4 @@
-# Runs a scriptblock in a background PowerShell runspace while keeping the UI responsive.
-# In GUI mode, the work executes on a separate thread and the UI thread pumps messages (~60fps).
-# In CLI mode, the scriptblock runs directly in the current session.
+# Runs a scriptblock in a background PowerShell runspace, optionally with a timeout.
 function Invoke-NonBlocking {
     param(
         [scriptblock]$ScriptBlock,
@@ -8,8 +6,8 @@ function Invoke-NonBlocking {
         [int]$TimeoutSeconds = 0
     )
 
-    # CLI mode without timeout: run directly in-process
-    if (-not $script:GuiWindow -and $TimeoutSeconds -eq 0) {
+    # No timeout: run directly in-process
+    if ($TimeoutSeconds -eq 0) {
         return (& $ScriptBlock @ArgumentList)
     }
 
@@ -22,30 +20,14 @@ function Invoke-NonBlocking {
 
         $handle = $ps.BeginInvoke()
 
-        if ($script:GuiWindow) {
-            # GUI mode: pump UI messages while waiting
-            $stopwatch = if ($TimeoutSeconds -gt 0) { [System.Diagnostics.Stopwatch]::StartNew() } else { $null }
-
-            while (-not $handle.IsCompleted) {
-                if ($stopwatch -and $stopwatch.Elapsed.TotalSeconds -ge $TimeoutSeconds) {
-                    $ps.Stop()
-                    throw "Operation timed out after $TimeoutSeconds seconds"
-                }
-                DoEvents
-                Start-Sleep -Milliseconds 16
-            }
-        }
-        else {
-            # CLI mode with timeout: block until completion or timeout
-            if (-not $handle.AsyncWaitHandle.WaitOne($TimeoutSeconds * 1000)) {
-                $ps.Stop()
-                throw "Operation timed out after $TimeoutSeconds seconds"
-            }
+        if (-not $handle.AsyncWaitHandle.WaitOne($TimeoutSeconds * 1000)) {
+            $ps.Stop()
+            throw "Operation timed out after $TimeoutSeconds seconds"
         }
 
         $result = $ps.EndInvoke($handle)
 
-        # Surface non-terminating errors raised inside the runspace so GUI-mode operations
+        # Surface non-terminating errors raised inside the runspace so failures
         # (e.g. failed app removals) don't fail silently - the runspace keeps its own error
         # stream that is otherwise discarded on Dispose.
         if ($ps.HadErrors) {

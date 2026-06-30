@@ -1,14 +1,11 @@
 # Win11Debloat
 
-[![GitHub Release](https://img.shields.io/github/v/release/Raphire/Win11Debloat?style=for-the-badge&label=Latest%20release)](https://github.com/Raphire/Win11Debloat/releases/latest)
-[![Join the Discussion](https://img.shields.io/badge/Join-the%20Discussion-2D9F2D?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Raphire/Win11Debloat/discussions)
-[![Static Badge](https://img.shields.io/badge/Documentation-_?style=for-the-badge&logo=bookstack&color=grey)](https://github.com/Raphire/Win11Debloat/wiki/)
+[![GitHub Release](https://img.shields.io/github/v/release/ender/win11debloat?style=for-the-badge&label=Latest%20release)](https://github.com/ender/win11debloat/releases/latest)
+[![Static Badge](https://img.shields.io/badge/Upstream%20Documentation-_?style=for-the-badge&logo=bookstack&color=grey)](https://github.com/Raphire/Win11Debloat/wiki/)
 
  Win11Debloat is a lightweight, easy to use PowerShell script that allows you to quickly declutter and customize your Windows experience, no installation required! You can use it to remove pre-installed apps, disable telemetry, remove intrusive interface elements and much more. No need to painstakingly go through all the settings yourself or remove apps one by one. Win11Debloat makes the process quick and easy!
 
-The script also includes many features that system administrators and power users will enjoy. Such as a powerful command-line interface, support for Windows Audit mode and the ability to make changes to other Windows users. You can also easily export & import your preferred settings, allowing you to quickly apply the same settings on all your systems. Please refer to our [wiki](https://github.com/Raphire/Win11Debloat/wiki) for more details.
-
-![Win11Debloat Menu](/Assets/Images/menu.png)
+This fork is a terminal-only build of Win11Debloat, intended for fully unattended/automated debloating: every tweak is driven entirely by command-line flags or a JSON config file ([`-Config`](#usage)), with no GUI. It is kept in sync with the upstream [Raphire/Win11Debloat](https://github.com/Raphire/Win11Debloat) project via an automated pull request workflow. Please refer to the upstream [wiki](https://github.com/Raphire/Win11Debloat/wiki) for details on individual tweaks.
 
 #### Did this script help you? Please consider buying me a cup of coffee to support my work
 
@@ -17,17 +14,17 @@ The script also includes many features that system administrators and power user
 ## Usage
 
 > [!Warning]
-> Great care went into making sure this script does not unintentionally break any OS functionality, but use at your own risk! If you run into any issues, please report them [here](https://github.com/Raphire/Win11Debloat/issues).
+> Great care went into making sure this script does not unintentionally break any OS functionality, but use at your own risk! If you run into any issues, please report them [here](https://github.com/ender/win11debloat/issues).
 
 ### Quick method
 
 Download & run the script automatically via PowerShell.
 
-1. Open PowerShell or Terminal.
+1. Open PowerShell or Terminal as an administrator.
 2. Copy and paste the command below into PowerShell:
 
 ```PowerShell
-& ([scriptblock]::Create((irm "https://debloat.raphi.re/")))
+& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/ender/win11debloat/master/Scripts/Get.ps1")))
 ```
 
 3. Wait for the script to automatically download and launch Win11Debloat.
@@ -40,7 +37,7 @@ This method supports command-line parameters to customize the behaviour of the s
 <details>
   <summary>Manually download & run the script.</summary><br/>
 
-  1. [Download the latest version of the script](https://github.com/Raphire/Win11Debloat/releases/latest), and extract the .ZIP file to your desired location.
+  1. [Download the latest version of the script](https://github.com/ender/win11debloat/releases/latest), and extract the .ZIP file to your desired location.
   2. Navigate to the Win11Debloat folder
   3. Double click the `Run.bat` file to start the script. NOTE: If the console window immediately closes and nothing happens, try the advanced method below.
   4. Accept the Windows UAC prompt to run the script as administrator, this is required for the script to function.
@@ -52,7 +49,7 @@ This method supports command-line parameters to customize the behaviour of the s
 <details>
   <summary>Manually download the script & run the script via PowerShell. Recommended for advanced users.</summary><br/>
 
-  1. [Download the latest version of the script](https://github.com/Raphire/Win11Debloat/releases/latest), and extract the .ZIP file to your desired location.
+  1. [Download the latest version of the script](https://github.com/ender/win11debloat/releases/latest), and extract the .ZIP file to your desired location.
   2. Open PowerShell or Terminal as an administrator.
   3. Temporarily enable PowerShell execution by entering the following command:
 
@@ -159,14 +156,9 @@ Below is an overview of the key features and functionality offered by Win11Deblo
 - Disable Xbox Game Bar integration & game/screen recording. This also disables `ms-gamingoverlay`/`ms-gamebar` popups if you uninstall the Xbox Game Bar.
 - Disable bloat in Brave browser (AI, Crypto, News, etc.)
 
-#### Advanced Features
-
-- Ability to [apply changes to a different user](https://github.com/Raphire/Win11Debloat/wiki/Advanced-Features#running-as-another-user), instead of the currently logged in user.
-- [Sysprep mode](https://github.com/Raphire/Win11Debloat/wiki/Advanced-Features#sysprep-mode) to apply changes to the Windows Default user profile. Which ensures, all new users will have the changes automatically applied to them.
-
 ## Contributing
 
-We welcome contributions of all kinds! Please see our [Contributing Guidelines](https://github.com/Raphire/Win11Debloat/blob/main/.github/CONTRIBUTING.md) for detailed instructions on how to get started and best practices for contributing.
+We welcome contributions of all kinds! Please see our [Contributing Guidelines](.github/CONTRIBUTING.md) for detailed instructions on how to get started and best practices for contributing.
 
 ## License
 

@@ -15,9 +15,6 @@
 function PrintPendingChanges {
     Write-Output "Win11Debloat will make the following changes:"
 
-    if ($script:Params['CreateRestorePoint']) {
-        Write-Output "- $($script:Features['CreateRestorePoint'].Label)"
-    }
     foreach ($parameterName in $script:Params.Keys) {
         if ($script:ControlParams -contains $parameterName) {
             continue
@@ -26,9 +23,6 @@ function PrintPendingChanges {
         # Print parameter description
         switch ($parameterName) {
             'Apps' {
-                continue
-            }
-            'CreateRestorePoint' {
                 continue
             }
             'RemoveApps' {

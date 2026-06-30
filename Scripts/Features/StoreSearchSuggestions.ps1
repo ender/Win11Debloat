@@ -1,36 +1,5 @@
 <#
     .SYNOPSIS
-    Disables Microsoft Store search suggestions in the start menu for all user profiles.
-
-    .DESCRIPTION
-    Iterates over every existing user profile and the Default user profile,
-    denying the EVERYONE group FullControl access to each user's Store app
-    database file (store.db). This prevents Windows from showing Store search
-    suggestions in the start menu search pane.
-
-    .EXAMPLE
-    DisableStoreSearchSuggestionsForAllUsers
-#>
-function DisableStoreSearchSuggestionsForAllUsers {
-    # Get path to Store app database for all users
-    $userPathString = GetUserDirectory -userName "*" -fileName "AppData\Local\Packages"
-    $usersStoreDbPaths = Get-ChildItem -Path $userPathString -ErrorAction SilentlyContinue
-
-    # Go through all users and disable start search suggestions
-    foreach ($storeDbPath in $usersStoreDbPaths) {
-        DisableStoreSearchSuggestions -StoreAppsDatabase ($storeDbPath.FullName + "\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\store.db")
-    }
-
-    # Also disable start search suggestions for the default user profile
-    $defaultStoreDbPath = GetStoreAppsDatabasePathForUser -UserName "Default"
-    if ($defaultStoreDbPath) {
-        DisableStoreSearchSuggestions -StoreAppsDatabase $defaultStoreDbPath
-    }
-}
-
-
-<#
-    .SYNOPSIS
     Disables Microsoft Store search suggestions for a single user.
 
     .DESCRIPTION
@@ -80,36 +49,6 @@ function DisableStoreSearchSuggestions {
     Set-Acl -Path $StoreAppsDatabase -AclObject $Acl | Out-Null
 
     Write-Host "Disabled Microsoft Store search suggestions for user $userName"
-}
-
-<#
-    .SYNOPSIS
-    Re-enables Microsoft Store search suggestions in the start menu for all user profiles.
-
-    .DESCRIPTION
-    Iterates over every existing user profile and the Default user profile,
-    removing the deny ACL from each user's Store app database file (store.db)
-    and then deleting the file. This restores the default Windows behavior
-    where Store search suggestions appear in the start menu.
-
-    .EXAMPLE
-    EnableStoreSearchSuggestionsForAllUsers
-#>
-function EnableStoreSearchSuggestionsForAllUsers {
-    # Get path to Store app database for all users
-    $userPathString = GetUserDirectory -userName "*" -fileName "AppData\Local\Packages"
-    $usersStoreDbPaths = Get-ChildItem -Path $userPathString -ErrorAction SilentlyContinue
-
-    # Go through all users and re-enable start search suggestions
-    foreach ($storeDbPath in $usersStoreDbPaths) {
-        EnableStoreSearchSuggestions -StoreAppsDatabase ($storeDbPath.FullName + "\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\store.db")
-    }
-
-    # Also re-enable for the default user profile
-    $defaultStoreDbPath = GetStoreAppsDatabasePathForUser -UserName "Default"
-    if ($defaultStoreDbPath) {
-        EnableStoreSearchSuggestions -StoreAppsDatabase $defaultStoreDbPath
-    }
 }
 
 <#
@@ -264,44 +203,4 @@ function Test-StoreSearchSuggestionsDisabled {
     }
 
     return $false
-}
-
-<#
-    .SYNOPSIS
-    Tests whether Store search suggestions are disabled for all user profiles.
-
-    .DESCRIPTION
-    Collects the store.db paths for all existing user profiles and the Default
-    user profile, then verifies that every one of them has the EVERYONE deny
-    FullControl ACL applied. Returns $true only if ALL paths pass the check.
-    Returns $false immediately if any user's store.db is not disabled.
-
-    .EXAMPLE
-    Test-StoreSearchSuggestionsDisabledForAllUsers
-#>
-function Test-StoreSearchSuggestionsDisabledForAllUsers {
-    $paths = @()
-
-    $userPathString = GetUserDirectory -userName "*" -fileName "AppData\Local\Packages"
-    $usersStoreDbPaths = Get-ChildItem -Path $userPathString -ErrorAction SilentlyContinue
-    foreach ($storeDbPath in $usersStoreDbPaths) {
-        $paths += ($storeDbPath.FullName + "\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\store.db")
-    }
-
-    $defaultStoreDbPath = GetStoreAppsDatabasePathForUser -UserName "Default"
-    if ($defaultStoreDbPath) {
-        $paths += $defaultStoreDbPath
-    }
-
-    if ($paths.Count -eq 0) {
-        return $false
-    }
-
-    foreach ($path in $paths) {
-        if (-not (Test-StoreSearchSuggestionsDisabled -StoreAppsDatabase $path)) {
-            return $false
-        }
-    }
-
-    return $true
 }

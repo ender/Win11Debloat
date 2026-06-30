@@ -12,18 +12,18 @@ function ShowCLIDefaultModeAppRemovalOptions {
         Write-Host " (2) Manually select which apps to remove" -ForegroundColor Yellow
         $RemoveAppsInput = Read-Host "Do you want to remove any apps? Apps will be removed for all users (n/1/2)"
 
-        # Show app selection form if user entered option 3
+        # Show app selection prompt if user entered option 2
         if ($RemoveAppsInput -eq '2') {
-            $result = Show-AppSelectionWindow
+            $script:SelectedApps = ShowCLIAppSelection
 
-            if ($result -ne $true) {
-                # User cancelled or closed app selection, change RemoveAppsInput so the menu will be shown again
+            if (-not $script:SelectedApps) {
+                # User cancelled app selection, change RemoveAppsInput so the menu will be shown again
                 Write-Host ""
                 Write-Host "Cancelled application selection, please try again" -ForegroundColor Red
 
                 $RemoveAppsInput = 'c'
             }
-            
+
             Write-Host ""
         }
     }

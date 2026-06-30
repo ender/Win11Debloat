@@ -2,19 +2,14 @@ param (
     [switch]$Verbose,
     [switch]$WhatIf,
     [switch]$Dev,
-    [switch]$CLI,
     [switch]$Silent,
-    [switch]$Sysprep,
     [string]$LogPath,
-    [string]$User,
     [switch]$NoRestartExplorer,
-    [switch]$CreateRestorePoint,
     [switch]$RunDefaults,
     [switch]$RunDefaultsLite,
     [switch]$RunSavedSettings,
     [string]$Config,
     [string]$Apps,
-    [string]$AppRemovalTarget,
     [switch]$RemoveApps,
     [switch]$RemoveGamingApps,
     [switch]$RemoveHPApps,
@@ -124,9 +119,9 @@ Write-Output "> Downloading Win11Debloat..."
 # Download Win11Debloat from GitHub as a zip archive.
 try {
     if ($Dev) {
-        $sourceUri = "https://github.com/Raphire/Win11Debloat/archive/refs/heads/master.zip"
+        $sourceUri = "https://github.com/ender/win11debloat/archive/refs/heads/master.zip"
     } else {
-        $sourceUri = (Invoke-RestMethod https://api.github.com/repos/Raphire/Win11Debloat/releases/latest).zipball_url
+        $sourceUri = (Invoke-RestMethod https://api.github.com/repos/ender/win11debloat/releases/latest).zipball_url
     }
     Invoke-RestMethod $sourceUri -OutFile $tempArchivePath
 }

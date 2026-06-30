@@ -72,50 +72,9 @@ function ImportConfigToParams {
             }
         }
 
-        if ($deploymentLookup.ContainsKey('CreateRestorePoint') -and [bool]$deploymentLookup['CreateRestorePoint']) {
-            AddParameter 'CreateRestorePoint'
-            $importedItems++
-        }
-
         if ($deploymentLookup.ContainsKey('RestartExplorer') -and -not [bool]$deploymentLookup['RestartExplorer']) {
             AddParameter 'NoRestartExplorer'
             $importedItems++
-        }
-
-        if ($deploymentLookup.ContainsKey('UserSelectionIndex')) {
-            switch ([int]$deploymentLookup['UserSelectionIndex']) {
-                1 {
-                    $otherUserName = if ($deploymentLookup.ContainsKey('OtherUsername')) { "$($deploymentLookup['OtherUsername'])".Trim() } else { '' }
-                    if (-not [string]::IsNullOrWhiteSpace($otherUserName)) {
-                        AddParameter 'User' $otherUserName
-                        $importedItems++
-                    }
-                }
-                2 {
-                    AddParameter 'Sysprep'
-                    $importedItems++
-                }
-            }
-        }
-
-        if ($deploymentLookup.ContainsKey('AppRemovalScopeIndex') -and $script:Params.ContainsKey('RemoveApps')) {
-            switch ([int]$deploymentLookup['AppRemovalScopeIndex']) {
-                0 {
-                    AddParameter 'AppRemovalTarget' 'AllUsers'
-                    $importedItems++
-                }
-                1 {
-                    AddParameter 'AppRemovalTarget' 'CurrentUser'
-                    $importedItems++
-                }
-                2 {
-                    $targetUser = if ($deploymentLookup.ContainsKey('OtherUsername')) { "$($deploymentLookup['OtherUsername'])".Trim() } else { '' }
-                    if (-not [string]::IsNullOrWhiteSpace($targetUser)) {
-                        AddParameter 'AppRemovalTarget' $targetUser
-                        $importedItems++
-                    }
-                }
-            }
         }
     }
 
