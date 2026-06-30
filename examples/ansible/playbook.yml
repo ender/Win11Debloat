@@ -1,0 +1,60 @@
+---
+# Example playbook for running Win11Debloat as part of a golden-image build
+# pipeline (e.g. driven by Packer against a VM template, or a hand-built
+# reference VM) once it has booted into Audit Mode, signed in as the
+# built-in Administrator.
+#
+# This assumes WinRM is already reachable on the target (most golden-image
+# pipelines enable it via a `specialize`-pass command in their
+# autounattend.xml, or via the imaging tool itself) and that the target
+# host is the audit-mode session for the image you're building, NOT a
+# live/production machine - Win11Debloat is meant to run exactly once per
+# image, before sysprep generalizes it.
+#
+# Usage:
+#   ansible-playbook -i inventory.ini playbook.yml
+#
+- name: Debloat Windows 11 image (Default user profile hive)
+  hosts: image_builder
+  gather_facts: false
+
+  vars:
+    win11debloat_dest: 'C:\Win11Debloat'
+    win11debloat_config: 'full-debloat.json'
+
+  tasks:
+    - name: Ensure destination folder exists
+      ansible.windows.win_file:
+        path: "{{ win11debloat_dest }}"
+        state: directory
+
+    - name: Copy Win11Debloat repo to the image
+      ansible.windows.win_copy:
+        src: ../../
+        dest: "{{ win11debloat_dest }}\\"
+      # Excluding .git keeps the copy small; not required for the script to run.
+
+    - name: Relax PowerShell execution policy for this run
+      ansible.windows.win_shell: Set-ExecutionPolicy Unrestricted -Scope Process -Force
+
+    - name: Run Win11Debloat against the Default user profile hive
+      ansible.windows.win_shell: >-
+        & "{{ win11debloat_dest }}\Win11Debloat.ps1"
+        -Silent
+        -Config "{{ win11debloat_dest }}\examples\config-samples\{{ win11debloat_config }}"
+      register: win11debloat_result
+      failed_when: win11debloat_result.rc != 0
+
+    - name: Show Win11Debloat output
+      ansible.builtin.debug:
+        var: win11debloat_result.stdout_lines
+
+    - name: Generalize the image and shut down
+      ansible.windows.win_shell: '& "$env:WINDIR\System32\Sysprep\sysprep.exe" /generalize /oobe /shutdown /quiet'
+      # The WinRM connection drops as soon as sysprep shuts the machine down,
+      # so this task is fired without waiting for its result. Whatever drives
+      # this playbook (Packer, a hypervisor API call, etc.) is responsible for
+      # detecting the power-off and capturing the image afterwards.
+      async: 5
+      poll: 0
+      ignore_errors: true

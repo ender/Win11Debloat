@@ -71,6 +71,13 @@ This method supports command-line parameters to customize the behaviour of the s
   This method supports command-line parameters to customize the behaviour of the script. Please click [here](https://github.com/Raphire/Win11Debloat/wiki/Command%E2%80%90line-Interface#parameters) for more information.
 </details>
 
+### Examples
+
+See the [`examples`](./examples) folder for sample `-Config` files, an
+`autounattend.xml` snippet for running Win11Debloat automatically in Audit
+Mode before sysprep, and an Ansible playbook for driving it from an
+image-build pipeline.
+
 ## Features
 
 Below is an overview of the key features and functionality offered by Win11Debloat. You can visit the [the wiki](https://github.com/Raphire/Win11Debloat/wiki) for more details.

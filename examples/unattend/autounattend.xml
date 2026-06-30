@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Example answer file showing how to run Win11Debloat unattended against the
+    sysprep "Default" user profile hive, as part of building a sealed/golden
+    Windows 11 image.
+
+    Flow:
+      1. oobeSystem pass: tells Windows Setup to drop into Audit Mode (logged
+         in as the built-in Administrator) instead of OOBE once the initial
+         install finishes.
+      2. auditUser pass: runs, in order, while the built-in Administrator is
+         signed in to the audit-mode desktop:
+           a. relax the PowerShell execution policy for this process only
+           b. download and run Win11Debloat with -Silent and -Config pointing
+              at a JSON file staged onto the image (see README.md in this
+              folder for staging options)
+           c. generalize the image and shut down, ready to be captured
+
+    Win11Debloat itself mounts C:\Users\Default\NTUSER.DAT for the duration
+    of the run, so every tweak in the config below is baked into the Default
+    profile and inherited by every user account created after this image is
+    deployed and goes through OOBE. The built-in Administrator's own profile
+    is never modified, it's only the account used to run the script.
+
+    This file only contains the audit-mode automation relevant to
+    Win11Debloat. A real autounattend.xml for an unattended install also
+    needs windowsPE/specialize passes for things like disk partitioning,
+    product key, locale and the local administrator password - merge the
+    settings below into your existing answer file rather than using this one
+    standalone.
+-->
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+  <settings pass="oobeSystem">
+    <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
+               xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <!-- Drop into Audit Mode instead of OOBE, so Win11Debloat can run and the image can be resealed before anyone sees the OOBE screens -->
+      <Reseal>
+        <Mode>Audit</Mode>
+      </Reseal>
+    </component>
+  </settings>
+
+  <settings pass="auditUser">
+    <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
+               xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <RunSynchronous>
+        <RunSynchronousCommand wcm:action="add">
+          <Order>1</Order>
+          <Description>Allow running unsigned PowerShell scripts for this process</Description>
+          <Path>cmd /c powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Unrestricted -Scope Process -Force"</Path>
+        </RunSynchronousCommand>
+
+        <RunSynchronousCommand wcm:action="add">
+          <Order>2</Order>
+          <Description>Download and run Win11Debloat against the Default user profile hive</Description>
+          <!-- Requires internet access in audit mode. See README.md for an offline alternative that stages the repo via $OEM$ instead. -->
+          <Path>cmd /c powershell -NoProfile -ExecutionPolicy Bypass -Command "&amp; ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/ender/win11debloat/master/Scripts/Get.ps1'))) -Silent -Config 'C:\Win11Debloat\examples\config-samples\full-debloat.json'"</Path>
+        </RunSynchronousCommand>
+
+        <RunSynchronousCommand wcm:action="add">
+          <Order>3</Order>
+          <Description>Generalize the image and shut down, ready to be captured</Description>
+          <Path>cmd /c "%WINDIR%\System32\Sysprep\sysprep.exe" /generalize /oobe /shutdown /quiet</Path>
+        </RunSynchronousCommand>
+      </RunSynchronous>
+    </component>
+  </settings>
+</unattend>

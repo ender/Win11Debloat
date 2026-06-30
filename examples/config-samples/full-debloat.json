@@ -1,0 +1,189 @@
+{
+    "Version": "1.0",
+    "Apps": [
+        "Clipchamp.Clipchamp",
+        "Microsoft.3DBuilder",
+        "Microsoft.549981C3F5F10",
+        "Microsoft.BingFinance",
+        "Microsoft.BingNews",
+        "Microsoft.BingWeather",
+        "Microsoft.GetHelp",
+        "Microsoft.Getstarted",
+        "Microsoft.MicrosoftOfficeHub",
+        "Microsoft.MicrosoftSolitaireCollection",
+        "Microsoft.People",
+        "Microsoft.PowerAutomateDesktop",
+        "Microsoft.Todos",
+        "Microsoft.WindowsFeedbackHub",
+        "Microsoft.WindowsMaps",
+        "Microsoft.Xbox.TCUI",
+        "Microsoft.XboxGameOverlay",
+        "Microsoft.XboxGamingOverlay",
+        "Microsoft.XboxSpeechToTextOverlay",
+        "Microsoft.YourPhone",
+        "Microsoft.ZuneMusic",
+        "Microsoft.ZuneVideo"
+    ],
+    "Tweaks": [
+        {
+            "Name": "DisableTelemetry",
+            "Value": true
+        },
+        {
+            "Name": "DisableBing",
+            "Value": true
+        },
+        {
+            "Name": "DisableStoreSearchSuggestions",
+            "Value": true
+        },
+        {
+            "Name": "DisableSuggestions",
+            "Value": true
+        },
+        {
+            "Name": "DisableLockscreenTips",
+            "Value": true
+        },
+        {
+            "Name": "DisableDesktopSpotlight",
+            "Value": true
+        },
+        {
+            "Name": "DisableLocationServices",
+            "Value": true
+        },
+        {
+            "Name": "DisableFindMyDevice",
+            "Value": true
+        },
+        {
+            "Name": "DisableEdgeAds",
+            "Value": true
+        },
+        {
+            "Name": "DisableCopilot",
+            "Value": true
+        },
+        {
+            "Name": "DisableRecall",
+            "Value": true
+        },
+        {
+            "Name": "DisableClickToDo",
+            "Value": true
+        },
+        {
+            "Name": "DisableAISvcAutoStart",
+            "Value": true
+        },
+        {
+            "Name": "DisablePaintAI",
+            "Value": true
+        },
+        {
+            "Name": "DisableNotepadAI",
+            "Value": true
+        },
+        {
+            "Name": "DisableEdgeAI",
+            "Value": true
+        },
+        {
+            "Name": "DisableWidgets",
+            "Value": true
+        },
+        {
+            "Name": "DisableMouseAcceleration",
+            "Value": true
+        },
+        {
+            "Name": "DisableStickyKeys",
+            "Value": true
+        },
+        {
+            "Name": "RevertContextMenu",
+            "Value": true
+        },
+        {
+            "Name": "HideChat",
+            "Value": true
+        },
+        {
+            "Name": "DisableDVR",
+            "Value": true
+        },
+        {
+            "Name": "DisableGameBarIntegration",
+            "Value": true
+        },
+        {
+            "Name": "DisableFastStartup",
+            "Value": true
+        },
+        {
+            "Name": "DisableStorageSense",
+            "Value": true
+        },
+        {
+            "Name": "DisableUpdateASAP",
+            "Value": true
+        },
+        {
+            "Name": "PreventUpdateAutoReboot",
+            "Value": true
+        },
+        {
+            "Name": "DisableDeliveryOptimization",
+            "Value": true
+        },
+        {
+            "Name": "ShowKnownFileExt",
+            "Value": true
+        },
+        {
+            "Name": "ShowHiddenFolders",
+            "Value": true
+        },
+        {
+            "Name": "HideDupliDrive",
+            "Value": true
+        },
+        {
+            "Name": "EnableDarkMode",
+            "Value": true
+        },
+        {
+            "Name": "DisableAnimations",
+            "Value": true
+        },
+        {
+            "Name": "TaskbarAlignLeft",
+            "Value": true
+        },
+        {
+            "Name": "EnableEndTask",
+            "Value": true
+        },
+        {
+            "Name": "ClearStart",
+            "Value": true
+        },
+        {
+            "Name": "DisableStartRecommended",
+            "Value": true
+        },
+        {
+            "Name": "DisableStartPhoneLink",
+            "Value": true
+        },
+        {
+            "Name": "Hide3dObjects",
+            "Value": true
+        },
+        {
+            "Name": "HideMusic",
+            "Value": true
+        }
+    ]
+}
