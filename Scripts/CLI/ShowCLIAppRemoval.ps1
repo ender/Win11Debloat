@@ -2,14 +2,12 @@
 function ShowCLIAppRemoval {
     PrintHeader "App Removal"
 
-    Write-Output "> Opening app selection form..."
+    $selectedApps = ShowCLIAppSelection
 
-    $result = Show-AppSelectionWindow
-
-    if ($result -eq $true) {
-        Write-Output "You have selected $($script:SelectedApps.Count) apps for removal"
+    if ($selectedApps) {
+        Write-Output "You have selected $($selectedApps.Count) apps for removal"
         AddParameter 'RemoveApps'
-        AddParameter 'Apps' ($script:SelectedApps -join ',')
+        AddParameter 'Apps' ($selectedApps -join ',')
 
         SaveSettings
 

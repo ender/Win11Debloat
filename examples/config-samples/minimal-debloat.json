@@ -1,0 +1,25 @@
+{
+    "Version": "1.0",
+    "Tweaks": [
+        {
+            "Name": "DisableTelemetry",
+            "Value": true
+        },
+        {
+            "Name": "DisableBing",
+            "Value": true
+        },
+        {
+            "Name": "DisableStoreSearchSuggestions",
+            "Value": true
+        },
+        {
+            "Name": "DisableWidgets",
+            "Value": true
+        },
+        {
+            "Name": "ShowKnownFileExt",
+            "Value": true
+        }
+    ]
+}

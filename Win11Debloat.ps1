@@ -1,18 +1,12 @@
 [CmdletBinding(SupportsShouldProcess)]
 param (
-    [switch]$CLI,
     [switch]$Silent,
-    [switch]$Sysprep,
     [string]$LogPath,
-    [string]$User,
-    [switch]$NoRestartExplorer,
-    [switch]$CreateRestorePoint,
     [switch]$RunDefaults,
     [switch]$RunDefaultsLite,
     [switch]$RunSavedSettings,
     [string]$Config,
     [string]$Apps,
-    [string]$AppRemovalTarget,
     [switch]$RemoveApps,
     [switch]$RemoveGamingApps,
     [switch]$RemoveHPApps,
@@ -70,8 +64,6 @@ param (
     [switch]$EnableLastActiveClick,
     [switch]$ClearStart,
     [string]$ReplaceStart,
-    [switch]$ClearStartAllUsers,
-    [string]$ReplaceStartAllUsers,
     [switch]$RevertContextMenu,
     [switch]$DisableDragTray,
     [switch]$DisableMouseAcceleration,
@@ -140,8 +132,6 @@ if (-not $isAdmin) {
 $script:Version = "2026.06.24"
 $configPath = Join-Path $PSScriptRoot 'Config'
 $logsPath = Join-Path $PSScriptRoot 'Logs'
-$schemasPath = Join-Path $PSScriptRoot 'Schemas'
-$scriptsPath = Join-Path $PSScriptRoot 'Scripts'
 
 $script:AppsListFilePath = Join-Path $configPath 'Apps.json'
 $script:DefaultSettingsFilePath = Join-Path $configPath 'DefaultSettings.json'
@@ -149,27 +139,9 @@ $script:FeaturesFilePath = Join-Path $configPath 'Features.json'
 $script:SavedSettingsFilePath = Join-Path $configPath 'LastUsedSettings.json'
 $script:DefaultLogPath = Join-Path $logsPath 'Win11Debloat.log'
 $script:RegfilesPath = Join-Path $PSScriptRoot 'Regfiles'
-$script:RegistryBackupsPath = Join-Path $PSScriptRoot 'Backups'
 $script:AssetsPath = Join-Path $PSScriptRoot 'Assets'
-$script:AppSelectionSchema = Join-Path $schemasPath 'AppSelectionWindow.xaml'
-$script:MainWindowSchema = Join-Path $schemasPath 'MainWindow.xaml'
-$script:MessageBoxSchema = Join-Path $schemasPath 'MessageBox.xaml'
-$script:AboutWindowSchema = Join-Path $schemasPath 'AboutWindow.xaml'
-$script:ApplyChangesWindowSchema = Join-Path $schemasPath 'ApplyChangesWindow.xaml'
-$script:SharedStylesSchema = Join-Path $schemasPath 'SharedStyles.xaml'
-$script:BubbleHintSchema = Join-Path $schemasPath 'BubbleHint.xaml'
-$script:ImportExportConfigSchema = Join-Path $schemasPath 'ImportExportConfigWindow.xaml'
-$script:RestoreBackupWindowSchema = Join-Path $schemasPath 'RestoreBackupWindow.xaml'
-$script:LoadAppsDetailsScriptPath = Join-Path (Join-Path $scriptsPath 'FileIO') 'LoadAppsDetailsFromJson.ps1'
-$script:TestAppInWingetListScriptPath = Join-Path (Join-Path $scriptsPath 'AppRemoval') 'Test-AppInWingetList.ps1'
 
-$script:ControlParams = 'WhatIf', 'Confirm', 'Verbose', 'Debug', 'LogPath', 'Silent', 'Sysprep', 'User', 'NoRestartExplorer', 'RunDefaults', 'RunDefaultsLite', 'RunSavedSettings', 'Config', 'CLI', 'AppRemovalTarget'
-
-# Script-level variables for GUI elements
-$script:GuiWindow = $null
-$script:CancelRequested = $false
-$script:ApplyProgressCallback = $null
-$script:ApplySubStepCallback = $null
+$script:ControlParams = 'WhatIf', 'Confirm', 'Verbose', 'Debug', 'LogPath', 'Silent', 'RunDefaults', 'RunDefaultsLite', 'RunSavedSettings', 'Config'
 
 # Check if current powershell environment is limited by security policies
 if ($ExecutionContext.SessionState.LanguageMode -ne "FullLanguage") {
@@ -229,7 +201,7 @@ try {
 catch { }
 
 # Check if script has all required files
-if (-not ((Test-Path $script:DefaultSettingsFilePath) -and (Test-Path $script:AppsListFilePath) -and (Test-Path $script:RegfilesPath) -and (Test-Path $script:AssetsPath) -and (Test-Path $script:AppSelectionSchema) -and (Test-Path $script:ApplyChangesWindowSchema) -and (Test-Path $script:SharedStylesSchema) -and (Test-Path $script:BubbleHintSchema) -and (Test-Path $script:RestoreBackupWindowSchema) -and (Test-Path $script:FeaturesFilePath))) {
+if (-not ((Test-Path $script:DefaultSettingsFilePath) -and (Test-Path $script:AppsListFilePath) -and (Test-Path $script:RegfilesPath) -and (Test-Path $script:AssetsPath) -and (Test-Path $script:FeaturesFilePath))) {
     Write-Error "Win11Debloat is unable to find required files, please ensure all script files are present"
     Write-Output ""
     Write-Output "Press any key to exit..."
@@ -296,6 +268,7 @@ if (-not $script:WingetInstalled -and -not $Silent) {
 # CLI functions
 . "$PSScriptRoot/Scripts/CLI/AwaitKeyToExit.ps1"
 . "$PSScriptRoot/Scripts/CLI/ShowCLILastUsedSettings.ps1"  
+. "$PSScriptRoot/Scripts/CLI/ShowCLIAppSelection.ps1"
 . "$PSScriptRoot/Scripts/CLI/ShowCLIDefaultModeAppRemovalOptions.ps1"
 . "$PSScriptRoot/Scripts/CLI/ShowCLIDefaultModeOptions.ps1"
 . "$PSScriptRoot/Scripts/CLI/ShowCLIAppRemoval.ps1"
@@ -304,21 +277,12 @@ if (-not $script:WingetInstalled -and -not $Silent) {
 . "$PSScriptRoot/Scripts/CLI/PrintHeader.ps1"
 
 # Features functions
-. "$PSScriptRoot/Scripts/Features/GetCurrentTweakState.ps1"
 . "$PSScriptRoot/Scripts/Features/InvokeChanges.ps1"
-. "$PSScriptRoot/Scripts/Features/CreateSystemRestorePoint.ps1"
-. "$PSScriptRoot/Scripts/Features/BackupRegistryFeatureSelection.ps1"
-. "$PSScriptRoot/Scripts/Features/BackupRegistrySnapshotCapture.ps1"
-. "$PSScriptRoot/Scripts/Features/BackupRegistryState.ps1"
-. "$PSScriptRoot/Scripts/Features/RegistryBackupValidation.ps1"
-. "$PSScriptRoot/Scripts/Features/RestoreRegistryApplyState.ps1"
-. "$PSScriptRoot/Scripts/Features/RestoreRegistryBackup.ps1"
 . "$PSScriptRoot/Scripts/Features/StoreSearchSuggestions.ps1"
 . "$PSScriptRoot/Scripts/Features/TelemetryScheduledTasks.ps1"
 . "$PSScriptRoot/Scripts/Features/WindowsOptionalFeatures.ps1"
 . "$PSScriptRoot/Scripts/Features/ImportRegistryFile.ps1"
 . "$PSScriptRoot/Scripts/Features/ReplaceStartMenu.ps1"
-. "$PSScriptRoot/Scripts/Features/RestartExplorer.ps1"
 
 # File I/O functions
 . "$PSScriptRoot/Scripts/FileIO/LoadJsonFile.ps1"
@@ -330,48 +294,19 @@ if (-not $script:WingetInstalled -and -not $Silent) {
 . "$PSScriptRoot/Scripts/FileIO/LoadAppsDetailsFromJson.ps1"
 . "$PSScriptRoot/Scripts/FileIO/LoadAppPresetsFromJson.ps1"
 
-# GUI functions
-. "$PSScriptRoot/Scripts/GUI/GetSystemUsesDarkMode.ps1"
-. "$PSScriptRoot/Scripts/GUI/SetWindowThemeResources.ps1"
-. "$PSScriptRoot/Scripts/GUI/AttachShiftClickBehavior.ps1"
-. "$PSScriptRoot/Scripts/GUI/ApplySettingsToUiControls.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-MessageBox.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-ConfigWindow.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-ApplyModal.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-AppSelectionWindow.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-RestoreBackupWindow.ps1"
-. "$PSScriptRoot/Scripts/GUI/RestoreBackupDialogFeatureLists.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-RestoreBackupDialog.ps1"
-. "$PSScriptRoot/Scripts/GUI/MainWindow-WindowChrome.ps1"
-. "$PSScriptRoot/Scripts/GUI/MainWindow-AppSelection.ps1"
-. "$PSScriptRoot/Scripts/GUI/MainWindow-TweaksBuilder.ps1"
-. "$PSScriptRoot/Scripts/GUI/MainWindow-Navigation.ps1"
-. "$PSScriptRoot/Scripts/GUI/MainWindow-Deployment.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-MainWindow.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-AboutDialog.ps1"
-. "$PSScriptRoot/Scripts/GUI/Show-Bubble.ps1"
-
 # Helper functions
 . "$PSScriptRoot/Scripts/Helpers/AddParameter.ps1"
-. "$PSScriptRoot/Scripts/Helpers/ResolveUserProfilePath.ps1"
-. "$PSScriptRoot/Scripts/Helpers/UserHiveHelpers.ps1"
-. "$PSScriptRoot/Scripts/Helpers/CheckIfUserExists.ps1"
+. "$PSScriptRoot/Scripts/Helpers/DefaultUserHive.ps1"
 . "$PSScriptRoot/Scripts/Helpers/CheckModernStandbySupport.ps1"
 . "$PSScriptRoot/Scripts/Helpers/GenerateAppsList.ps1"
-. "$PSScriptRoot/Scripts/Helpers/GetFriendlyRegistryBackupTarget.ps1"
-. "$PSScriptRoot/Scripts/Helpers/GetFriendlyTargetUserName.ps1"
 . "$PSScriptRoot/Scripts/Helpers/ImportConfigToParams.ps1"
-. "$PSScriptRoot/Scripts/Helpers/GetTargetUserForAppRemoval.ps1"
 . "$PSScriptRoot/Scripts/Helpers/Get-RegFileOperations.ps1"
-. "$PSScriptRoot/Scripts/Helpers/Test-TargetUserName.ps1"
 . "$PSScriptRoot/Scripts/Helpers/GetUserDirectory.ps1"
 . "$PSScriptRoot/Scripts/Helpers/GetUserName.ps1"
 . "$PSScriptRoot/Scripts/Helpers/RegistryPathHelpers.ps1"
 . "$PSScriptRoot/Scripts/Helpers/ApplyRegistryRegFile.ps1"
-. "$PSScriptRoot/Scripts/Helpers/ConfirmUnsafeAppRemoval.ps1"
 
 # Threading functions
-. "$PSScriptRoot/Scripts/Threading/DoEvents.ps1"
 . "$PSScriptRoot/Scripts/Threading/Invoke-NonBlocking.ps1"
 
 
@@ -386,6 +321,18 @@ if (-not $script:WingetInstalled -and -not $Silent) {
 
 # Get current Windows build version
 $WinVersion = Get-ItemPropertyValue 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' CurrentBuild
+
+# Win11Debloat always targets the Default user profile hive, so that every user account
+# created after this image is sysprep-generalized inherits the applied tweaks.
+if ([int]$WinVersion -lt 22000) {
+    Write-Error "Win11Debloat requires Windows 11 (build 22000 or later) because it always targets the Default user profile hive"
+    AwaitKeyToExit
+}
+
+if (-not (Get-DefaultUserProfilePath)) {
+    Write-Error "Unable to find the Default user profile directory (C:\Users\Default)"
+    AwaitKeyToExit
+}
 
 # Check if the machine supports Modern Standby, this is used to determine if the DisableModernStandbyNetworking option can be used
 $script:ModernStandbySupported = CheckModernStandbySupport
@@ -420,35 +367,10 @@ else {
     $ProgressPreference = 'Continue'
 }
 
-if ($script:Params.ContainsKey("Sysprep")) {
-    GetUserDirectory -userName "Default" | Out-Null
-
-    # Exit script if run in Sysprep mode on Windows 10
-    if ($WinVersion -lt 22000) {
-        Write-Error "Win11Debloat Sysprep mode is not supported on Windows 10"
-        AwaitKeyToExit
-    }
-}
-
-# Ensure that target user exists, if User or AppRemovalTarget parameter was provided
-if ($script:Params.ContainsKey("User")) {
-    GetUserDirectory -userName $script:Params.Item("User") | Out-Null
-}
-if ($script:Params.ContainsKey("AppRemovalTarget")) {
-    $appRemovalTargetValue = $script:Params.Item("AppRemovalTarget")
-    # 'AllUsers' / 'CurrentUser' are sentinel scope values, not real usernames - don't resolve them as a profile
-    if ($appRemovalTargetValue -notin @('AllUsers', 'CurrentUser')) {
-        GetUserDirectory -userName $appRemovalTargetValue | Out-Null
-    }
-}
-
 # Remove LastUsedSettings.json file if it exists and is empty
 if ((Test-Path $script:SavedSettingsFilePath) -and ([String]::IsNullOrWhiteSpace((Get-content $script:SavedSettingsFilePath)))) {
     Remove-Item -Path $script:SavedSettingsFilePath -recurse
 }
-
-# Default to CLI mode for deployment-targeted parameters.
-$launchInCLI = $CLI -or $script:Params.ContainsKey("User") -or $script:Params.ContainsKey("Sysprep") -or $script:Params.ContainsKey("AppRemovalTarget")
 
 # Change script execution based on provided parameters or user input
 if ((-not $script:Params.Count) -or $RunDefaults -or $RunDefaultsLite -or $RunSavedSettings -or $Config -or ($controlParamsCount -eq $script:Params.Count)) {
@@ -480,31 +402,7 @@ if ((-not $script:Params.Count) -or $RunDefaults -or $RunDefaultsLite -or $RunSa
         }
     }
     else {
-        if ($launchInCLI) {
-            $Mode = ShowCLIMenuOptions 
-        }
-        else {
-            try {
-                $result = Show-MainWindow
-            
-                try {
-                    Stop-Transcript
-                }
-                catch { }
-
-                Exit
-            }
-            catch {
-                Write-Warning "Unable to load WPF GUI (not supported in this environment), falling back to CLI mode"
-                if (-not $Silent) {
-                    Write-Host ""
-                    Write-Host "Press any key to continue..."
-                    $null = [System.Console]::ReadKey()
-                }
-
-                $Mode = ShowCLIMenuOptions
-            }
-        }
+        $Mode = ShowCLIMenuOptions
     }
 
     # Add execution parameters based on the mode
@@ -531,16 +429,30 @@ else {
 
 # If the number of keys in ControlParams equals the number of keys in Params then no modifications/changes were selected
 #  or added by the user, and the script can exit without making any changes.
-if (($controlParamsCount -eq $script:Params.Keys.Count) -or ($script:Params.Keys.Count -eq 1 -and ($script:Params.Keys -contains 'CreateRestorePoint' -or $script:Params.Keys -contains 'Apps'))) {
+if (($controlParamsCount -eq $script:Params.Keys.Count) -or ($script:Params.Keys.Count -eq 1 -and $script:Params.Keys -contains 'Apps')) {
     Write-Output "The script completed without making any changes."
     AwaitKeyToExit
 }
 
-# Execute all selected/provided parameters using the consolidated function
-# (This also handles restore point creation if requested)
-Invoke-AllChanges
-
-RestartExplorer
+# Execute all selected/provided parameters using the consolidated function, with the
+# Default user profile hive mounted for the duration so registry changes are baked into it
+$mountedDefaultHive = $false
+try {
+    if (-not $script:Params.ContainsKey("WhatIf")) {
+        Mount-DefaultUserHive
+        $mountedDefaultHive = $true
+    }
+    Invoke-AllChanges
+}
+catch {
+    Write-Error "$_"
+    AwaitKeyToExit
+}
+finally {
+    if ($mountedDefaultHive) {
+        Dismount-DefaultUserHive
+    }
+}
 
 Write-Output ""
 Write-Output ""

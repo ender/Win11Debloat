@@ -4,14 +4,7 @@ function PrintHeader {
         $title
     )
 
-    $fullTitle = " Win11Debloat Script - $title"
-
-    if ($script:Params.ContainsKey("Sysprep")) {
-        $fullTitle = "$fullTitle (Sysprep mode)"
-    }
-    else {
-        $fullTitle = "$fullTitle (User: $(GetUserName))"
-    }
+    $fullTitle = " Win11Debloat Script - $title (User: $(GetUserName))"
 
     Clear-Host
     Write-Host "-------------------------------------------------------------------------------------------"

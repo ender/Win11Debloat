@@ -1,25 +1,13 @@
 # How to Contribute?
 
-We welcome contributions from the community. You can contribute to Win11Debloat by:
+This fork is a terminal-only, fully-scriptable build of [Raphire/Win11Debloat](https://github.com/Raphire/Win11Debloat), built for unattended/automated debloating. The GUI and registry backup/restore-point flow have intentionally been removed, and every tweak is driven by command-line flags or a JSON config file. Per-user tweaks always target the Default user profile hive (`C:\Users\Default\NTUSER.DAT`) rather than the current/invoking user or all existing users, for use during sysprep image preparation. Most of the tweak/app definitions are kept in sync with upstream via an automated pull request workflow, so contributions to individual tweaks are often best made upstream; contributions here should focus on the CLI/automation layer itself.
 
-- Reporting issues and bugs [here](https://github.com/Raphire/Win11Debloat/issues/new?template=bug_report.yml)
-- Submitting feature requests [here](https://github.com/Raphire/Win11Debloat/issues/new?template=feature_request.yml)
-- Testing Win11Debloat
+We welcome contributions from the community. You can contribute by:
+
+- Reporting issues and bugs [here](https://github.com/ender/win11debloat/issues)
+- Testing the script
 - Creating a pull request
 - Improving the documentation
-
-# Testing Win11Debloat
-
-You can help us test the latest changes and additions to the script. If you encounter any issues, please report them [here](https://github.com/Raphire/Win11Debloat/issues/new?template=bug_report.yml).
-
-> [!WARNING]
-> The prerelease version of Win11Debloat is meant for developers to test the script. Don't use this in production environments!
-
-You can launch the prerelease version of Win11Debloat by running this command:
-
-```ps1
-& ([scriptblock]::Create((irm "https://debloat.raphi.re/"))) -Dev
-```
 
 # Contributing Code
 
@@ -74,7 +62,6 @@ Win11Debloat/
 │   ├── CLI/                     # Command-line interface helpers
 │   ├── Features/                # Feature apply/undo logic (e.g. InvokeChanges.ps1, ReplaceStartMenu.ps1)
 │   ├── FileIO/                  # File input/output helpers
-│   ├── GUI/                     # GUI window definitions and logic
 │   ├── Helpers/                 # Shared helper functions
 │   └── Threading/               # Threading utilities
 ├── Config/
@@ -83,17 +70,14 @@ Win11Debloat/
 │   ├── Features.json            # All features with metadata
 │   └── LastUsedSettings.json    # Last used configuration (generated during use)
 ├── Regfiles/                    # Registry files for all features
-│   ├── Undo/                    # Registry files for reverting features
-│   └── Sysprep/                 # Registry files for Sysprep mode
-├── Schemas/                     # XAML Schemas for GUI elements
-├── Assets/                      # Static assets (icons, start menu templates)
-├── Backups/                     # Registry backups (generated during use)
+│   └── Undo/                    # Registry files for reverting features
+├── Assets/                      # Static assets (start menu templates)
 └── Logs/                        # Script logs (generated during use)
 ```
 
 ### Best Practices
 
-1. **Test Thoroughly**: Always test your changes on a Windows test environment before submitting. This includes undoing tweaks and running script as another user and in Sysprep mode.
+1. **Test Thoroughly**: Always test your changes on a Windows test environment before submitting. This includes applying and undoing tweaks.
 2. **Document Changes**: Update the `README.md` and other relevant documentation. Wiki documentation will be generated/updated based on the `Features.json` and `Apps.json` files.
 3. **Follow Existing Patterns**: Look at existing implementations for guidance.
 4. **Use Clear Naming**: Choose descriptive names for features, IDs, and registry files.
@@ -110,7 +94,6 @@ Win11Debloat/
 - Keep lines reasonable in length
 - Use descriptive variable names
 - Try to limit your indentation to a max of 4-5 levels, if possible.
-- Use [Segoe Fluent Icon Assets](https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font) for icons.
 
 ### Common Pitfalls
 
@@ -118,31 +101,21 @@ Avoid these common mistakes when contributing:
 
 1. **Forgetting Get.ps1**: When adding a new command-line parameter, contributors often remember to add it to `Win11Debloat.ps1` but forget to add the same parameter to `Scripts/Get.ps1`. Both files **must** have matching parameters.
 
-2. **Missing Registry Files**: Always create an `Undo` registry file for reversibility, aswell as a `Sysprep` registry file for applying changes to other users and Sysprep mode.
+2. **Missing Registry Files**: Always create an `Undo` registry file for reversibility.
 
-3. **Incorrect Registry Hives for Sysprep**: Sysprep registry files are meant to apply changes to a different user. Registry keys in the `HKEY_CURRENT_USER` hive must use `hkey_users\default` instead. Ensure you update **all** registry keys in the file.
-
-4. **Wrong Registry File Location**:
+3. **Wrong Registry File Location**:
    - Main action files go in `Regfiles/`
    - Undo files go in `Regfiles/Undo/`
-   - Sysprep files go in `Regfiles/Sysprep/`
 
    Placing files in the wrong directory may cause the script to fail when trying to apply or undo changes.
 
-5. **Not Testing Undo Functionality**: Always test that your undo registry file properly reverts all changes.
+4. **Not Testing Undo Functionality**: Always test that your undo registry file properly reverts all changes.
 
-6. **Not Testing User/Sysprep Functionality**: Always test that your feature works when applied to another user or to the Windows default user with Sysprep. Sysprep changes can be tested by creating new users after running the script.
-
-7. **Missing Category**: Features without a `Category` field (set to `null`) won't appear in the GUI. This is intentional for command-line-only features, make sure this is what you want before submitting.
-
-8. **Hardcoded Paths**: When writing PowerShell logic, use `$PSScriptRoot` and script variables instead of hardcoded paths. This ensures the script works regardless of where it's installed.
+5. **Hardcoded Paths**: When writing PowerShell logic, use `$PSScriptRoot` and script variables instead of hardcoded paths. This ensures the script works regardless of where it's installed.
 
 ## Implementing New Features
 
 ### Adding Support for a New App
-
-> [!NOTE]
-> The script automatically generates the app options for the GUI from the app information in the Apps.json file.
 
 To add a new app that can be removed via Win11Debloat:
 
@@ -174,7 +147,7 @@ To add a new app that can be removed via Win11Debloat:
 Features are defined in `Config/Features.json` and can modify Windows settings via registry files or PowerShell commands.
 
 > [!NOTE]
-> For simple features that just include a registry change, no actual coding is required in the main script except for adding the corresponding command-line parameters. The GUI is automatically built using the information in the Features.json file.
+> For simple features that just include a registry change, no actual coding is required in the main script except for adding the corresponding command-line parameters.
 
 #### 1a. Create the Registry File(s)
 
@@ -182,7 +155,6 @@ Create new registry files in the `Regfiles/` directory:
 
 - **Disable file**: `Disable_YourFeature.reg`
 - **Enable file**: `Undo/Enable_YourFeature.reg` (for reverting)
-- **Sysprep file**: `Sysprep/Disable_YourFeature.reg` (for Sysprep mode)
 
 Example registry file structure:
 
@@ -190,15 +162,6 @@ Example registry file structure:
 Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\YourPath]
-"SettingName"=dword:00000000
-```
-
-A Sysprep registry file should apply the same changes as the normal action. Replace the hive of registry keys that start with `HKEY_CURRENT_USER` with `hkey_users\default`. For example:
-
-```reg
-Windows Registry Editor Version 5.00
-
-[hkey_users\default\Software\Microsoft\Windows\CurrentVersion\YourPath]
 "SettingName"=dword:00000000
 ```
 
@@ -214,16 +177,11 @@ Add your feature to the `"Features"` array in `Config/Features.json`:
 {
   "FeatureId": "YourFeatureId",
   "Label": "Short label describing the feature",
-  "ToolTip": "Detailed explanation of what this feature does and its impact.",
-  "Category": "Privacy & Suggested Content",
-  "Priority": 1,
   "RegistryKey": "Disable_YourFeature.reg",
   "ApplyText": "Disabling your feature",
   "UndoLabel": "Short description for the undo",
   "ApplyUndoText": "Enabling your feature",
   "RegistryUndoKey": "Enable_YourFeature.reg",
-  "RequiresReboot": false,
-  "DisableWhenApplied": false,
   "MinVersion": null,
   "MaxVersion": null
 }
@@ -232,17 +190,12 @@ Add your feature to the `"Features"` array in `Config/Features.json`:
 **Field Descriptions**:
 
 - `FeatureId`: Unique identifier, this must match parameter name in the Win11Debloat.ps1 and Get.ps1 files.
-- `Label`: Short description shown in the UI and wiki documentation.
-- `ToolTip`: Detailed explanation of what the feature does, used for tooltips in the GUI.
-- `Category`: One of the predefined categories (see Categories array in Features.json), features without a category won't be loaded into the GUI.
-- `Priority`: Optional. The priority value (int) is used to sort features within a category. If this field is omitted the feature will be sorted based on the order in the Features.json file.
+- `Label`: Short description shown in change summaries.
 - `RegistryKey`: Filename of the registry file to apply (in Regfiles/ directory) or null if feature does not require registry changes.
 - `ApplyText`: Message shown when applying the feature.
-- `UndoLabel`: Short description for the undo shown in the UI.
+- `UndoLabel`: Short description for the undo.
 - `ApplyUndoText`: Message shown when undoing the feature.
 - `RegistryUndoKey`: Filename of the registry file to revert changes or null if feature does not require registry changes.
-- `RequiresReboot`: Optional boolean. Set to `true` if the feature requires a system reboot to take effect.
-- `DisableWhenApplied`: Optional boolean. Set to `true` if the feature has no supported undo method.
 - `MinVersion`: Minimum Windows build version (e.g., "22000") or null.
 - `MaxVersion`: Maximum Windows version or null.
 
@@ -296,56 +249,12 @@ To add your feature to the default preset, edit `Config/DefaultSettings.json` an
   "Version": "1.0",
   "Settings": [
     {
-      "Name": "CreateRestorePoint",
-      "Value": true
-    },
-    {
       "Name": "DisableTelemetry",
       "Value": true
     },
     {
       "Name": "YourFeatureId",
       "Value": true
-    }
-  ]
-}
-```
-
-### Adding a Category
-
-To add a new category for organizing features:
-
-- Add a new category entry to the `"Categories"` array in `Config/Features.json`:
-
-  ```json
-  {
-    "Name": "Your Category Name",
-    "Icon": "&#xE#### ;"
-  }
-  ```
-
-> [!TIP]
-> Use [Segoe Fluent Icon Assets](https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font) for icon codes.
-
-### Adding UI Groups
-
-UI Groups allow features to be grouped together in the GUI with a combobox (dropdown) selection:
-
-```json
-{
-  "GroupId": "UniqueGroupId",
-  "Label": "Display label for the group",
-  "ToolTip": "Explanation of what this group controls",
-  "Category": "Category Name",
-  "Priority": 1,
-  "Values": [
-    {
-      "Label": "Option 1",
-      "FeatureIds": ["FeatureId1"]
-    },
-    {
-      "Label": "Option 2",
-      "FeatureIds": ["FeatureId2"]
     }
   ]
 }
@@ -368,7 +277,7 @@ UI Groups allow features to be grouped together in the GUI with a combobox (drop
 
 3. **Create a Pull Request** on GitHub:
 
-   - Go to the original Win11Debloat repository
+   - Go to this repository
    - Click "New Pull Request"
    - Select your fork and branch
    - Provide a clear description of your changes, include references to the registry keys used
@@ -380,6 +289,5 @@ UI Groups allow features to be grouped together in the GUI with a combobox (drop
 
 If you have questions about contributing, feel free to:
 
-- Open a [discussion](https://github.com/Raphire/Win11Debloat/discussions)
 - Comment on an existing issue
 - Ask in your pull request

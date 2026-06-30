@@ -44,7 +44,7 @@ function Invoke-FeatureApply {
     # ---- Custom features (no registry backing, or special handling required) ----
     switch ($FeatureId) {
         'RemoveApps' {
-            Write-Host "> $applyText for $(GetFriendlyTargetUserName)..."
+            Write-Host "> $applyText for all users..."
             $appsList = GenerateAppsList
 
             if ($appsList.Count -eq 0) {
@@ -93,8 +93,8 @@ function Invoke-FeatureApply {
             return
         }
         'ClearStart' {
-            Write-Host "> $applyText for user $(GetUserName)..."
-            $startMenuBinFile = GetStartMenuBinPathForUser -UserName (GetUserName)
+            Write-Host "> $applyText..."
+            $startMenuBinFile = GetStartMenuBinPathForUser
             if (-not [string]::IsNullOrWhiteSpace($startMenuBinFile)) {
                 ReplaceStartMenu -startMenuBinFile $startMenuBinFile
             }
@@ -102,32 +102,17 @@ function Invoke-FeatureApply {
             return
         }
         'ReplaceStart' {
-            Write-Host "> $applyText for user $(GetUserName)..."
-            $startMenuBinFile = GetStartMenuBinPathForUser -UserName (GetUserName)
+            Write-Host "> $applyText..."
+            $startMenuBinFile = GetStartMenuBinPathForUser
             if (-not [string]::IsNullOrWhiteSpace($startMenuBinFile)) {
                 ReplaceStartMenu -startMenuBinFile $startMenuBinFile -startMenuTemplate $script:Params.Item("ReplaceStart")
             }
             Write-Host ""
             return
         }
-        'ClearStartAllUsers' {
-            ReplaceStartMenuForAllUsers
-            return
-        }
-        'ReplaceStartAllUsers' {
-            ReplaceStartMenuForAllUsers -startMenuTemplate $script:Params.Item("ReplaceStartAllUsers")
-            return
-        }
         'DisableStoreSearchSuggestions' {
-            if ($script:Params.ContainsKey("Sysprep")) {
-                Write-Host "> Disabling Microsoft Store search suggestions in the start menu for all users..."
-                DisableStoreSearchSuggestionsForAllUsers
-                Write-Host ""
-                return
-            }
-
-            Write-Host "> Disabling Microsoft Store search suggestions for user $(GetUserName)..."
-            $storeDb = GetStoreAppsDatabasePathForUser -UserName (GetUserName)
+            Write-Host "> Disabling Microsoft Store search suggestions for the Default user profile..."
+            $storeDb = GetStoreAppsDatabasePathForUser
             if ($storeDb) {
                 DisableStoreSearchSuggestions -StoreAppsDatabase $storeDb
             }
@@ -157,15 +142,8 @@ function Invoke-FeatureUndo {
 
     switch ($FeatureId) {
         'DisableStoreSearchSuggestions' {
-            if ($script:Params.ContainsKey('Sysprep')) {
-                Write-Host "> Re-enabling Microsoft Store search suggestions in the start menu for all users..."
-                EnableStoreSearchSuggestionsForAllUsers
-                Write-Host ""
-                return
-            }
-
-            Write-Host "> Re-enabling Microsoft Store search suggestions for user $(GetUserName)..."
-            $storeDb = GetStoreAppsDatabasePathForUser -UserName (GetUserName)
+            Write-Host "> Re-enabling Microsoft Store search suggestions for the Default user profile..."
+            $storeDb = GetStoreAppsDatabasePathForUser
             if ($storeDb) {
                 EnableStoreSearchSuggestions -StoreAppsDatabase $storeDb
             }
@@ -219,35 +197,18 @@ function Resolve-UndoRegFilePath {
 
 .DESCRIPTION
     Iterates through the provided feature IDs and calls Invoke-FeatureApply
-    for each. Handles progress callbacks (GUI mode) and cancellation checks.
-    This is called by Invoke-AllChanges during the apply phase.
+    for each. This is called by Invoke-AllChanges during the apply phase.
 #>
 function Invoke-ApplyFeatures {
     param(
         [Parameter(Mandatory)]
-        [string[]]$FeatureIds,
-        [Parameter(Mandatory)]
-        [int]$StartStep,
-        [Parameter(Mandatory)]
-        [int]$TotalSteps
+        [string[]]$FeatureIds
     )
 
     if ($FeatureIds.Count -eq 0) { return }
 
-    $step = $StartStep
     foreach ($featureId in $FeatureIds) {
-        if ($script:CancelRequested) { return }
-
-        # Resolve display name for the progress indicator
-        $f = $script:Features[$featureId]
-        $displayName = $f.ApplyText
-
-        if ($script:ApplyProgressCallback) {
-            & $script:ApplyProgressCallback $step $TotalSteps $displayName
-        }
-
         Invoke-FeatureApply -FeatureId $featureId
-        $step++
     }
 }
 
@@ -265,33 +226,21 @@ function Invoke-ApplyFeatures {
 function Invoke-UndoFeatures {
     param(
         [Parameter(Mandatory)]
-        [string[]]$FeatureIds,
-        [Parameter(Mandatory)]
-        [int]$StartStep,
-        [Parameter(Mandatory)]
-        [int]$TotalSteps
+        [string[]]$FeatureIds
     )
 
     if ($FeatureIds.Count -eq 0) { return }
 
-    $step = $StartStep
     foreach ($featureId in $FeatureIds) {
-        if ($script:CancelRequested) { return }
-
         $f = if ($script:Features.ContainsKey($featureId)) { $script:Features[$featureId] } else { $null }
         $undoLabel = if ($f -and $f.UndoLabel) { $f.UndoLabel } else { $featureId }
         $undoText = if ($f -and $f.ApplyUndoText) { $f.ApplyUndoText } else { $undoLabel }
-
-        if ($script:ApplyProgressCallback) {
-            & $script:ApplyProgressCallback $step $TotalSteps $undoText
-        }
 
         if ($f -and $f.RegistryUndoKey) {
             ImportRegistryFile "> $undoText" (Resolve-UndoRegFilePath $f.RegistryUndoKey)
         }
 
         Invoke-FeatureUndo -FeatureId $featureId
-        $step++
     }
 }
 
@@ -301,22 +250,10 @@ function Invoke-UndoFeatures {
         Main orchestrator: applies and undoes all selected features.
 
     .DESCRIPTION
-        Sequenced in four phases:
-        1. Registry backup
-        2. System restore point
-        3. Apply phase - applies all selected features via Invoke-ApplyFeatures
-        4. Undo phase - undoes selected features via Invoke-UndoFeatures
-
-        Progress is reported through $script:ApplyProgressCallback when set
-        (used by the GUI modal). Cancellation is checked between each step.
+        Applies all selected features via Invoke-ApplyFeatures, then undoes any
+        selected features via Invoke-UndoFeatures.
 #>
 function Invoke-AllChanges {
-    # Guard: prevent running as SYSTEM account without explicit target user
-    $isSystem = ([Security.Principal.WindowsIdentity]::GetCurrent().User.Value -eq 'S-1-5-18')
-    if ($isSystem -and -not $script:Params.ContainsKey("User") -and -not $script:Params.ContainsKey("Sysprep")) {
-        throw "Win11Debloat is running as the SYSTEM account. Use the '-User' or '-Sysprep' parameter to target a specific user."
-    }
-
     $script:RegistryImportFailures = 0
 
     # ---- Gather work items ----
@@ -324,95 +261,22 @@ function Invoke-AllChanges {
     foreach ($key in $script:Params.Keys) {
         if ($script:ControlParams -contains $key) { continue }
         if ($key -eq 'Apps') { continue }
-        if ($key -eq 'CreateRestorePoint') { continue }
         $applyIds += $key
     }
     $undoIds = @($script:UndoParams.Keys)
 
-    # ---- Determine if registry backup is needed ----
-    $needsBackup = $false
-    foreach ($id in $applyIds) {
-        $f = $script:Features[$id]
-        if ($f -and -not [string]::IsNullOrWhiteSpace([string]$f.RegistryKey)) {
-            $needsBackup = $true
-            break
-        }
-    }
-    if (-not $needsBackup) {
-        foreach ($id in $undoIds) {
-            $f = if ($script:Features.ContainsKey($id)) { $script:Features[$id] } else { $null }
-            if ($f -and $f.RegistryUndoKey) { $needsBackup = $true; break }
-        }
-    }
-
-    # ---- Calculate total progress steps ----
-    $totalSteps = $applyIds.Count + $undoIds.Count
-    if ($needsBackup) { $totalSteps++ }
-    if ($script:Params.ContainsKey("CreateRestorePoint")) { $totalSteps++ }
-    $step = 0
-
     # ================================================================
-    # Phase 1: Registry backup
-    # ================================================================
-    if ($needsBackup) {
-        $step++
-        if ($script:ApplyProgressCallback) {
-            & $script:ApplyProgressCallback $step $totalSteps "Creating registry backup..."
-        }
-
-        if ($script:Params.ContainsKey("WhatIf")) {
-            Write-Host "[WhatIf] Create registry backup" -ForegroundColor Cyan
-        }
-        else {
-            Write-Host "> Creating registry backup..."
-            try {
-                $undoSyntheticFeatures = @($undoIds | ForEach-Object {
-                    $f = if ($script:Features.ContainsKey($_)) { $script:Features[$_] } else { $null }
-                    if ($f -and $f.RegistryUndoKey) {
-                        [PSCustomObject]@{ FeatureId = $_; RegistryKey = (Resolve-UndoRegFilePath $f.RegistryUndoKey) }
-                    }
-                } | Where-Object { $_ })
-                New-RegistrySettingsBackup -ActionableKeys $applyIds -ExtraFeatures $undoSyntheticFeatures | Out-Null
-            }
-            catch {
-                throw "Registry backup failed before applying changes. $($_.Exception.Message)"
-            }
-        }
-    }
-
-    # ================================================================
-    # Phase 2: System restore point
-    # ================================================================
-    if ($script:Params.ContainsKey("CreateRestorePoint")) {
-        $step++
-        if ($script:ApplyProgressCallback) {
-            & $script:ApplyProgressCallback $step $totalSteps "Creating system restore point, this may take a moment..."
-        }
-        if ($script:Params.ContainsKey("WhatIf")) {
-            Write-Host "[WhatIf] Create system restore point" -ForegroundColor Cyan
-            Write-Host ""
-        }
-        else {
-            Write-Host "> Creating a system restore point..."
-            CreateSystemRestorePoint
-            Write-Host ""
-        }
-    }
-
-    # ================================================================
-    # Phase 3: Apply features
+    # Apply features
     # ================================================================
     if ($applyIds.Count -gt 0) {
-        Invoke-ApplyFeatures -FeatureIds $applyIds -StartStep ($step + 1) -TotalSteps $totalSteps
-        $step += $applyIds.Count
+        Invoke-ApplyFeatures -FeatureIds $applyIds
     }
 
     # ================================================================
-    # Phase 4: Undo features
+    # Undo features
     # ================================================================
     if ($undoIds.Count -gt 0) {
-        Invoke-UndoFeatures -FeatureIds $undoIds -StartStep ($step + 1) -TotalSteps $totalSteps
-        $step += $undoIds.Count
+        Invoke-UndoFeatures -FeatureIds $undoIds
     }
 
     # ================================================================

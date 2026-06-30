@@ -1,0 +1,115 @@
+name: Sync tweak/app definitions from upstream
+
+# This fork is CLI-only and always targets the Default user profile hive
+# (for sysprep/sealed-image deployment), so it intentionally diverges from
+# upstream's GUI and registry-backup/restore-point flows. We can't just
+# merge upstream/master wholesale. Instead this only pulls the raw
+# tweak/app data (Apps.json, Features.json, Regfiles, start menu assets)
+# into a branch and opens a PR, so a maintainer can review/resolve any
+# conflicts (e.g. upstream re-adding a feature this fork removed) by hand
+# before merging.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Every Monday at 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Ensure upstream-sync label exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create upstream-sync --color ededed --description "Automated sync from upstream Raphire/Win11Debloat" --force
+
+      - name: Skip if an unreviewed sync PR is already open
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(gh pr list --base master --label upstream-sync --state open --json number --jq 'length')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Add upstream remote and fetch
+        if: steps.existing.outputs.count == '0'
+        run: |
+          git remote add upstream https://github.com/Raphire/Win11Debloat.git
+          git fetch upstream master --depth=1
+
+      - name: Create sync branch
+        if: steps.existing.outputs.count == '0'
+        run: |
+          branch="upstream-sync/$(date +%Y-%m-%d)"
+          echo "BRANCH=$branch" >> "$GITHUB_ENV"
+          git checkout -b "$branch"
+
+      - name: Pull in shared tweak/app definitions from upstream
+        if: steps.existing.outputs.count == '0'
+        run: |
+          # Remove first so files/dirs deleted upstream are also removed here,
+          # then restore from upstream. Regfiles/Sysprep is not part of upstream
+          # (it's this fork's Default-user-hive equivalent of Regfiles/), so it's
+          # excluded from the wipe and left untouched by the sync.
+          rm -rf Regfiles Assets/Start
+          git checkout upstream/master -- Regfiles Assets/Start Config/Apps.json Config/Features.json
+          git checkout HEAD -- Regfiles/Sysprep
+          git add -A Regfiles Assets/Start Config/Apps.json Config/Features.json
+
+      - name: Check for changes
+        if: steps.existing.outputs.count == '0'
+        id: diff
+        run: |
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push
+        if: steps.existing.outputs.count == '0' && steps.diff.outputs.changed == 'true'
+        run: |
+          git commit -m "Sync tweak/app definitions from upstream Raphire/Win11Debloat"
+          git push -u origin "$BRANCH" --force-with-lease
+
+      - name: Open pull request
+        if: steps.existing.outputs.count == '0' && steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --label upstream-sync \
+            --title "Sync tweak/app definitions from upstream Raphire/Win11Debloat" \
+            --body "$(cat <<'EOF'
+          Automated sync of \`Config/Apps.json\`, \`Config/Features.json\`, \`Regfiles/\` and \`Assets/Start/\` from [Raphire/Win11Debloat](https://github.com/Raphire/Win11Debloat) master.
+
+          This needs a manual review before merging:
+
+          - This fork has no GUI or registry-backup/restore-point flow, and only ever targets the Default user profile hive (never the current/invoking user), so any new upstream feature that depends on those (e.g. a re-added \`CreateRestorePoint\` entry in \`Features.json\`) should be dropped from this diff rather than merged.
+          - Every \`FeatureId\` added or changed here must have a matching command-line parameter in \`Win11Debloat.ps1\` and \`Scripts/Get.ps1\`, and corresponding logic in \`Scripts/Features/InvokeChanges.ps1\` if it's not a plain registry-file feature.
+          - \`Regfiles/Sysprep\` (this fork's Default-user-hive registry files) is not touched by this sync and may need matching updates by hand if upstream's \`Regfiles/\` changed.
+          - \`Config/DefaultSettings.json\` is intentionally excluded from this sync and curated separately.
+          EOF
+          )"

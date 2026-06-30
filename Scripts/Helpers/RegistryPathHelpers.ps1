@@ -27,24 +27,6 @@ function Split-RegistryPath {
         $null
     }
 
-    if ($hiveName.Equals('HKEY_USERS', [System.StringComparison]::OrdinalIgnoreCase) -and
-        -not [string]::IsNullOrWhiteSpace($normalizedSubKey) -and
-        -not [string]::IsNullOrWhiteSpace([string]$script:RegistryTargetHiveMountName)) {
-        if ($normalizedSubKey -match '^(?<mount>[^\\]+)(?:\\(?<rest>.*))?$') {
-            $mountName = [string]$matches.mount
-            if ($mountName.Equals('Default', [System.StringComparison]::OrdinalIgnoreCase)) {
-                $remainingSubKey = if ($matches.rest) { [string]$matches.rest } else { '' }
-                $targetMountName = [string]$script:RegistryTargetHiveMountName
-                if ([string]::IsNullOrWhiteSpace($remainingSubKey)) {
-                    $normalizedSubKey = $targetMountName
-                }
-                else {
-                    $normalizedSubKey = "$targetMountName\$remainingSubKey"
-                }
-            }
-        }
-    }
-
     return [PSCustomObject]@{
         Hive = $hiveName
         SubKey = $normalizedSubKey
@@ -70,15 +52,9 @@ function Get-RegistryRootKey {
 function Get-RegistryFilePathForFeature {
     param(
         [Parameter(Mandatory)]
-        [string]$RegistryKey,
-        [switch]$UseSysprepRegFiles
+        [string]$RegistryKey
     )
 
-    $useSysprepLayout = $UseSysprepRegFiles -or $script:Params.ContainsKey('Sysprep') -or $script:Params.ContainsKey('User')
-    if ($useSysprepLayout) {
-        return Join-Path (Join-Path $script:RegfilesPath 'Sysprep') $RegistryKey
-    }
-
-    return Join-Path $script:RegfilesPath $RegistryKey
+    return Join-Path (Join-Path $script:RegfilesPath 'Sysprep') $RegistryKey
 }
 

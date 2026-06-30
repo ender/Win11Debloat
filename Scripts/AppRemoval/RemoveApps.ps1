@@ -1,13 +1,12 @@
 <#
     .SYNOPSIS
-    Removes one or more Windows app packages based on the target scope.
+    Removes one or more Windows app packages for all users on the system.
 
     .DESCRIPTION
     Iterates over the provided list of app identifiers and removes each one.
     The removal method (winget vs. Appx cmdlets) is determined per-app from
     Apps.json. Microsoft Edge is deferred to the end of the loop so that all
-    winget attempts run before any force-remove prompt. A scheduled task is
-    only created when the User or Sysprep parameter was passed.
+    winget attempts run before any force-remove prompt.
     After each winget removal, the system is checked to confirm whether the
     app is still installed before reporting an error.
 
@@ -34,24 +33,12 @@ function RemoveApps {
         return
     }
 
-    $targetUser = GetTargetUserForAppRemoval
-    $appCount = @($appsList).Count
-    $appIndex = 0
-
     $edgeIds = @('Microsoft.Edge', 'XPFFTQ037JWMHS')
     $edgeAppsInList = @()
     $wingetRemovedApps = @()
 
     Foreach ($app in $appsList) {
-        if ($script:CancelRequested) { return }
-
-        $appIndex++
-
-        if ($script:ApplySubStepCallback -and $appCount -gt 1) {
-            & $script:ApplySubStepCallback "Removing apps ($appIndex/$appCount)" $appIndex $appCount
-        }
-
-        # Microsoft Edge is handled after the loop to avoid duplicate scheduled tasks and allow fallback if winget fails
+        # Microsoft Edge is handled after the loop to avoid duplicate removal attempts and allow fallback if winget fails
         if ($edgeIds -contains $app) {
             $edgeAppsInList += $app
             continue
@@ -64,7 +51,7 @@ function RemoveApps {
             $wingetRemovedApps += $app
         }
         else {
-            Remove-AppxApp -app $app -targetUser $targetUser
+            Remove-AppxApp -app $app
         }
     }
 
@@ -101,15 +88,18 @@ function RemoveApps {
 
 <#
     .SYNOPSIS
-    Uninstalls a non-Edge app via WinGet and/or schedules its removal.
+    Uninstalls a non-Edge app via WinGet.
 
     .DESCRIPTION
-    Runs winget uninstall for a single app. If the User or Sysprep
-    parameter was passed, also schedules removal for future logins.
-    After uninstall, the system is checked to confirm whether the app
-    is still present — winget output is not trusted on its
-    own, as it sometimes reports failure after a successful removal.
-    Edge apps are handled separately after the main loop.
+    Runs winget uninstall for a single app. After uninstall, the system is
+    checked to confirm whether the app is still present — winget output is
+    not trusted on its own, as it sometimes reports failure after a
+    successful removal. Edge apps are handled separately after the main loop.
+    Also schedules a RunOnce uninstall for the app in the Default user
+    profile hive, so it is removed for every user account created after
+    this image is sysprep-generalized (WinGet apps aren't provisioned
+    per-machine like Appx packages, so this is the only way to keep them
+    off accounts that don't exist yet).
 
     .PARAMETER app
     The WinGet package ID to uninstall (e.g. 'Microsoft.BingNews').
@@ -122,14 +112,8 @@ function Remove-WinGetApp {
         return
     }
 
-    if ($script:Params.ContainsKey("User")) {
-        Write-Host "Adding scheduled task to uninstall $app for user $(GetUserName)..."
-        Set-RunOnceWingetTask -appId $app
-    }
-    elseif ($script:Params.ContainsKey("Sysprep")) {
-        Write-Host "Adding scheduled task to uninstall $app for new users..."
-        Set-RunOnceWingetTask -appId $app
-    }
+    Write-Host "Scheduling uninstall of $app for new users..."
+    Set-RunOnceWingetTask -appId $app
 
     Invoke-NonBlocking -ScriptBlock {
         param($appId)
@@ -139,14 +123,54 @@ function Remove-WinGetApp {
 
 <#
     .SYNOPSIS
+    Schedules a WinGet uninstall to run on first logon for new user accounts.
+
+    .DESCRIPTION
+    Writes a RunOnce value into the Default user profile hive
+    (HKEY_USERS\Default\...\RunOnce), so every user account created after
+    this image is sysprep-generalized will uninstall the given app the
+    first time they log in.
+
+    .PARAMETER appId
+    The WinGet package ID to uninstall (e.g. 'Microsoft.BingNews').
+#>
+function Set-RunOnceWingetTask {
+    param([string]$appId)
+
+    $safeAppId = $appId.Replace('\', '_')
+    $taskName = "Uninstall_$safeAppId"
+    $escapedAppId = $appId.Replace("'", "''")
+    $wingetCommand = "winget uninstall --accept-source-agreements --disable-interactivity --id '$escapedAppId'"
+    $encodedWingetCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($wingetCommand))
+
+    $operation = [PSCustomObject]@{
+        KeyPath       = 'HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+        ValueName     = $taskName
+        ValueType     = 'String'
+        ValueData     = "powershell.exe -NoProfile -EncodedCommand $encodedWingetCommand"
+        OperationType = 'SetValue'
+    }
+
+    try {
+        Invoke-RegistryOperation -Operation $operation -RegFilePath '<RunOnce>'
+    }
+    catch {
+        Write-Host "Failed to schedule uninstall task for $($appId) for new users: $_" -ForegroundColor Red
+    }
+}
+
+<#
+    .SYNOPSIS
     Removes Microsoft Edge via WinGet (both AppIds), with fallback to force-remove.
 
     .DESCRIPTION
-    Edge has multiple package IDs. Runs winget uninstall for each one,
-    then creates a single scheduled task if the User or Sysprep parameter
-    was passed. After all attempts, the system is checked to confirm
-    whether Edge is still present. The force-remove prompt only
-    appears if Edge remains installed — winget false positives are ignored.
+    Edge has multiple package IDs. Runs winget uninstall for each one, and
+    schedules a matching RunOnce uninstall in the Default user profile hive
+    for each, so new user accounts created after this image is
+    sysprep-generalized also have Edge removed on first logon.
+    After all attempts, the system is checked to confirm whether Edge is
+    still present. The force-remove prompt only appears if Edge remains
+    installed — winget false positives are ignored.
 
     .PARAMETER edgeAppsInList
     The Edge AppIds that appear in the removal list (one or both).
@@ -159,17 +183,11 @@ function Remove-EdgeApp {
         return
     }
 
-    if ($script:Params.ContainsKey("User")) {
-        Write-Host "Adding scheduled task to uninstall Microsoft Edge for user $(GetUserName)..."
-        Set-RunOnceWingetTask -appId 'Microsoft.Edge'
-    }
-    elseif ($script:Params.ContainsKey("Sysprep")) {
-        Write-Host "Adding scheduled task to uninstall Microsoft Edge for new users..."
-        Set-RunOnceWingetTask -appId 'Microsoft.Edge'
-    }
-
     foreach ($edgeApp in $edgeAppsInList) {
         Write-Host "Removing $edgeApp"
+        Write-Host "Scheduling uninstall of $edgeApp for new users..."
+        Set-RunOnceWingetTask -appId $edgeApp
+
         Invoke-NonBlocking -ScriptBlock {
             param($appId)
             winget uninstall --accept-source-agreements --disable-interactivity --id $appId
@@ -179,43 +197,22 @@ function Remove-EdgeApp {
 
 <#
     .SYNOPSIS
-    Removes an app via Remove-AppxPackage / Remove-ProvisionedAppxPackage.
+    Removes an app for all users via Remove-AppxPackage / Remove-ProvisionedAppxPackage.
 
     .PARAMETER app
     The package identifier to remove (e.g. 'Clipchamp.Clipchamp').
-
-    .PARAMETER targetUser
-    Target scope: "AllUsers", "CurrentUser", or a specific username.
 #>
 function Remove-AppxApp {
-    param([string]$app, [string]$targetUser)
+    param([string]$app)
 
     $appPattern = '*' + $app + '*'
 
     try {
-        switch ($targetUser) {
-            "AllUsers" {
-                Invoke-NonBlocking -ScriptBlock {
-                    param($pattern)
-                    Get-AppxPackage -Name $pattern -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction Continue
-                    Get-AppxProvisionedPackage -Online | Where-Object { $_.PackageName -like $pattern } | ForEach-Object { Remove-ProvisionedAppxPackage -Online -AllUsers -PackageName $_.PackageName }
-                } -ArgumentList $appPattern
-            }
-            "CurrentUser" {
-                Invoke-NonBlocking -ScriptBlock {
-                    param($pattern)
-                    Get-AppxPackage -Name $pattern | Remove-AppxPackage -ErrorAction Continue
-                } -ArgumentList $appPattern
-            }
-            default {
-                Invoke-NonBlocking -ScriptBlock {
-                    param($pattern, $user)
-                    $userAccount = New-Object System.Security.Principal.NTAccount($user)
-                    $userSid = $userAccount.Translate([System.Security.Principal.SecurityIdentifier]).Value
-                    Get-AppxPackage -Name $pattern -User $userSid | Remove-AppxPackage -User $userSid -ErrorAction Continue
-                } -ArgumentList @($appPattern, $targetUser)
-            }
-        }
+        Invoke-NonBlocking -ScriptBlock {
+            param($pattern)
+            Get-AppxPackage -Name $pattern -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction Continue
+            Get-AppxProvisionedPackage -Online | Where-Object { $_.PackageName -like $pattern } | ForEach-Object { Remove-ProvisionedAppxPackage -Online -AllUsers -PackageName $_.PackageName }
+        } -ArgumentList $appPattern
     }
     catch {
         Write-Verbose "Something went wrong while trying to remove $($app): $_"
@@ -319,74 +316,12 @@ function Get-AppRemovalMethod {
 
     .DESCRIPTION
     Only invoked after it has been confirmed that Edge is still present
-    following all winget uninstall attempts. In GUI mode, displays a
-    warning message box; in CLI mode, prompts via Read-Host. On
+    following all winget uninstall attempts. Prompts via Read-Host, and on
     confirmation, performs a force-remove of the Edge package.
 #>
 function Request-EdgeForceRemove {
-    if ($script:GuiWindow) {
-        $result = Show-MessageBox -Message 'Unable to uninstall Microsoft Edge via WinGet. Would you like to forcefully uninstall it? NOT RECOMMENDED!' -Title 'Force Uninstall Microsoft Edge?' -Button 'YesNo' -Icon 'Warning'
-        if ($result -eq 'Yes') {
-            Write-Host ""
-            ForceRemoveEdge
-        }
-    }
-    elseif ($(Read-Host -Prompt "Would you like to forcefully uninstall Microsoft Edge? NOT RECOMMENDED! (y/n)") -eq 'y') {
+    if ($(Read-Host -Prompt "Would you like to forcefully uninstall Microsoft Edge? NOT RECOMMENDED! (y/n)") -eq 'y') {
         Write-Host ""
         ForceRemoveEdge
-    }
-}
-
-<#
-    .SYNOPSIS
-    Dynamically sets a RunOnce registry key to schedule a winget uninstall.
-
-    .DESCRIPTION
-    Writes directly to HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
-    via the PowerShell registry API within Invoke-WithTargetUserHive,
-    which handles hive loading and HKEY_USERS\Default → SID remapping.
-    Used instead of static .reg files to avoid file dependency for each WinGet app.
-
-    The winget command is Base64-encoded and invoked via powershell.exe -EncodedCommand
-    rather than interpolated directly into cmd.exe /c. This prevents shell metacharacters
-    (such as &, |, <, >, ^, ") in the app ID from being interpreted as command syntax,
-    even if future catalog updates introduce IDs containing those characters.
-
-    .PARAMETER appId
-    The winget package ID to schedule for uninstall (e.g. 'XP9CXNGPPJ97XX').
-#>
-function Set-RunOnceWingetTask {
-    param([string]$appId)
-
-    $targetUserName = if ($script:Params.ContainsKey("Sysprep")) { "Default" } else { $script:Params.Item("User") }
-
-    # Sanitize appId for use in registry value names (backslashes are path separators)
-    $safeAppId = $appId.Replace('\', '_')
-
-    $taskName = "Uninstall_$safeAppId"
-
-    # Escape single quotes in appId, then wrap in single quotes so cmd/pwsh metacharacters
-    # like & | < > ^ " are treated as literals. Base64-encode the whole command so the
-    # RunOnce value contains only [A-Za-z0-9+/=] — safe in any shell parser.
-    $escapedAppId = $appId.Replace("'", "''")
-    $wingetCommand = "winget uninstall --accept-source-agreements --disable-interactivity --id '$escapedAppId'"
-    $encodedWingetCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($wingetCommand))
-
-    $operation = [PSCustomObject]@{
-        KeyPath       = 'HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
-        ValueName     = $taskName
-        ValueType     = 'String'
-        ValueData     = "powershell.exe -NoProfile -EncodedCommand $encodedWingetCommand"
-        OperationType = 'SetValue'
-    }
-
-    try {
-        Invoke-WithTargetUserHive -TargetUserName $targetUserName -ScriptBlock {
-            param($op)
-            Invoke-RegistryOperation -Operation $op -RegFilePath '<dynamic>'
-        } -ArgumentObject $operation
-    }
-    catch {
-        Write-Host "Failed to schedule uninstall task for $($appId): $_" -ForegroundColor Red
     }
 }
