@@ -7,6 +7,8 @@
 
 This fork is a terminal-only build of Win11Debloat, intended for fully unattended/automated debloating: every tweak is driven entirely by command-line flags or a JSON config file ([`-Config`](#usage)), with no GUI. It is kept in sync with the upstream [Raphire/Win11Debloat](https://github.com/Raphire/Win11Debloat) project via an automated pull request workflow. Please refer to the upstream [wiki](https://github.com/Raphire/Win11Debloat/wiki) for details on individual tweaks.
 
+This fork always applies per-user tweaks to the **Default user profile hive** (`C:\Users\Default\NTUSER.DAT`), never to the current/invoking user's own profile. It's designed to be run once during Windows image preparation, from the built-in Administrator account in audit mode, before running `sysprep /generalize /oobe`. Every tweak gets baked into the Default profile, so every user account created after the sealed image is deployed inherits the applied settings automatically. The built-in Administrator's own profile is not modified, it's only the execution context used to apply the tweaks.
+
 #### Did this script help you? Please consider buying me a cup of coffee to support my work
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M5C6UPC)

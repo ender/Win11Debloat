@@ -2,7 +2,6 @@
 param (
     [switch]$Silent,
     [string]$LogPath,
-    [switch]$NoRestartExplorer,
     [switch]$RunDefaults,
     [switch]$RunDefaultsLite,
     [switch]$RunSavedSettings,
@@ -65,8 +64,6 @@ param (
     [switch]$EnableLastActiveClick,
     [switch]$ClearStart,
     [string]$ReplaceStart,
-    [switch]$ClearStartAllUsers,
-    [string]$ReplaceStartAllUsers,
     [switch]$RevertContextMenu,
     [switch]$DisableDragTray,
     [switch]$DisableMouseAcceleration,
@@ -144,7 +141,7 @@ $script:DefaultLogPath = Join-Path $logsPath 'Win11Debloat.log'
 $script:RegfilesPath = Join-Path $PSScriptRoot 'Regfiles'
 $script:AssetsPath = Join-Path $PSScriptRoot 'Assets'
 
-$script:ControlParams = 'WhatIf', 'Confirm', 'Verbose', 'Debug', 'LogPath', 'Silent', 'NoRestartExplorer', 'RunDefaults', 'RunDefaultsLite', 'RunSavedSettings', 'Config'
+$script:ControlParams = 'WhatIf', 'Confirm', 'Verbose', 'Debug', 'LogPath', 'Silent', 'RunDefaults', 'RunDefaultsLite', 'RunSavedSettings', 'Config'
 
 # Check if current powershell environment is limited by security policies
 if ($ExecutionContext.SessionState.LanguageMode -ne "FullLanguage") {
@@ -286,7 +283,6 @@ if (-not $script:WingetInstalled -and -not $Silent) {
 . "$PSScriptRoot/Scripts/Features/WindowsOptionalFeatures.ps1"
 . "$PSScriptRoot/Scripts/Features/ImportRegistryFile.ps1"
 . "$PSScriptRoot/Scripts/Features/ReplaceStartMenu.ps1"
-. "$PSScriptRoot/Scripts/Features/RestartExplorer.ps1"
 
 # File I/O functions
 . "$PSScriptRoot/Scripts/FileIO/LoadJsonFile.ps1"
@@ -300,7 +296,7 @@ if (-not $script:WingetInstalled -and -not $Silent) {
 
 # Helper functions
 . "$PSScriptRoot/Scripts/Helpers/AddParameter.ps1"
-. "$PSScriptRoot/Scripts/Helpers/ResolveUserProfilePath.ps1"
+. "$PSScriptRoot/Scripts/Helpers/DefaultUserHive.ps1"
 . "$PSScriptRoot/Scripts/Helpers/CheckModernStandbySupport.ps1"
 . "$PSScriptRoot/Scripts/Helpers/GenerateAppsList.ps1"
 . "$PSScriptRoot/Scripts/Helpers/ImportConfigToParams.ps1"
@@ -325,6 +321,18 @@ if (-not $script:WingetInstalled -and -not $Silent) {
 
 # Get current Windows build version
 $WinVersion = Get-ItemPropertyValue 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' CurrentBuild
+
+# Win11Debloat always targets the Default user profile hive, so that every user account
+# created after this image is sysprep-generalized inherits the applied tweaks.
+if ([int]$WinVersion -lt 22000) {
+    Write-Error "Win11Debloat requires Windows 11 (build 22000 or later) because it always targets the Default user profile hive"
+    AwaitKeyToExit
+}
+
+if (-not (Get-DefaultUserProfilePath)) {
+    Write-Error "Unable to find the Default user profile directory (C:\Users\Default)"
+    AwaitKeyToExit
+}
 
 # Check if the machine supports Modern Standby, this is used to determine if the DisableModernStandbyNetworking option can be used
 $script:ModernStandbySupported = CheckModernStandbySupport
@@ -426,10 +434,25 @@ if (($controlParamsCount -eq $script:Params.Keys.Count) -or ($script:Params.Keys
     AwaitKeyToExit
 }
 
-# Execute all selected/provided parameters using the consolidated function
-Invoke-AllChanges
-
-RestartExplorer
+# Execute all selected/provided parameters using the consolidated function, with the
+# Default user profile hive mounted for the duration so registry changes are baked into it
+$mountedDefaultHive = $false
+try {
+    if (-not $script:Params.ContainsKey("WhatIf")) {
+        Mount-DefaultUserHive
+        $mountedDefaultHive = $true
+    }
+    Invoke-AllChanges
+}
+catch {
+    Write-Error "$_"
+    AwaitKeyToExit
+}
+finally {
+    if ($mountedDefaultHive) {
+        Dismount-DefaultUserHive
+    }
+}
 
 Write-Output ""
 Write-Output ""

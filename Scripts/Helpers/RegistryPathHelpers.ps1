@@ -55,6 +55,6 @@ function Get-RegistryFilePathForFeature {
         [string]$RegistryKey
     )
 
-    return Join-Path $script:RegfilesPath $RegistryKey
+    return Join-Path (Join-Path $script:RegfilesPath 'Sysprep') $RegistryKey
 }
 

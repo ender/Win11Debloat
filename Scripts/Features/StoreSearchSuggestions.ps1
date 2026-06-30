@@ -124,32 +124,18 @@ function EnableStoreSearchSuggestions {
 
 <#
     .SYNOPSIS
-    Returns the full path to the Store app database file for a given user.
+    Returns the full path to the Store app database file for the Default user profile.
 
     .DESCRIPTION
-    Resolves the path to the Microsoft Store app database (store.db) for the
-    specified username. When no username is provided or the value is empty,
-    falls back to the current user's local app data path via $env:LOCALAPPDATA.
-
-    .PARAMETER UserName
-    The target username. Pass an empty string or omit to resolve for the current user.
+    Resolves the path to the Microsoft Store app database (store.db) inside
+    the Default user profile, so changes are inherited by every user account
+    created after this image is sysprep-generalized.
 
     .EXAMPLE
-    GetStoreAppsDatabasePathForUser -UserName "Jeff"
-
-    .EXAMPLE
-    GetStoreAppsDatabasePathForUser -UserName "Default"
+    GetStoreAppsDatabasePathForUser
 #>
 function GetStoreAppsDatabasePathForUser {
-    param(
-        [string]$UserName
-    )
-
-    if ([string]::IsNullOrWhiteSpace($UserName)) {
-        return "$env:LOCALAPPDATA\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\store.db"
-    }
-
-    return (GetUserDirectory -userName $UserName -fileName "AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\store.db" -exitIfPathNotFound $false)
+    return (GetUserDirectory -fileName "AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\store.db" -exitIfPathNotFound $false)
 }
 
 <#

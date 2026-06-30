@@ -1,8 +1,9 @@
 name: Sync tweak/app definitions from upstream
 
-# This fork is CLI-only and intentionally diverges from upstream's GUI,
-# Sysprep targeting and registry-backup/restore-point flows, so we can't
-# just merge upstream/master wholesale. Instead this only pulls the raw
+# This fork is CLI-only and always targets the Default user profile hive
+# (for sysprep/sealed-image deployment), so it intentionally diverges from
+# upstream's GUI and registry-backup/restore-point flows. We can't just
+# merge upstream/master wholesale. Instead this only pulls the raw
 # tweak/app data (Apps.json, Features.json, Regfiles, start menu assets)
 # into a branch and opens a PR, so a maintainer can review/resolve any
 # conflicts (e.g. upstream re-adding a feature this fork removed) by hand
@@ -67,10 +68,12 @@ jobs:
         if: steps.existing.outputs.count == '0'
         run: |
           # Remove first so files/dirs deleted upstream are also removed here,
-          # then restore from upstream and strip back out what this fork doesn't support.
+          # then restore from upstream. Regfiles/Sysprep is not part of upstream
+          # (it's this fork's Default-user-hive equivalent of Regfiles/), so it's
+          # excluded from the wipe and left untouched by the sync.
           rm -rf Regfiles Assets/Start
           git checkout upstream/master -- Regfiles Assets/Start Config/Apps.json Config/Features.json
-          rm -rf Regfiles/Sysprep
+          git checkout HEAD -- Regfiles/Sysprep
           git add -A Regfiles Assets/Start Config/Apps.json Config/Features.json
 
       - name: Check for changes
@@ -104,8 +107,9 @@ jobs:
 
           This needs a manual review before merging:
 
-          - This fork has no GUI, Sysprep targeting, or registry-backup/restore-point flow, so any new upstream feature that depends on those (e.g. a re-added \`CreateRestorePoint\` entry in \`Features.json\`) should be dropped from this diff rather than merged.
+          - This fork has no GUI or registry-backup/restore-point flow, and only ever targets the Default user profile hive (never the current/invoking user), so any new upstream feature that depends on those (e.g. a re-added \`CreateRestorePoint\` entry in \`Features.json\`) should be dropped from this diff rather than merged.
           - Every \`FeatureId\` added or changed here must have a matching command-line parameter in \`Win11Debloat.ps1\` and \`Scripts/Get.ps1\`, and corresponding logic in \`Scripts/Features/InvokeChanges.ps1\` if it's not a plain registry-file feature.
+          - \`Regfiles/Sysprep\` (this fork's Default-user-hive registry files) is not touched by this sync and may need matching updates by hand if upstream's \`Regfiles/\` changed.
           - \`Config/DefaultSettings.json\` is intentionally excluded from this sync and curated separately.
           EOF
           )"

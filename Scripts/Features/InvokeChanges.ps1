@@ -93,8 +93,8 @@ function Invoke-FeatureApply {
             return
         }
         'ClearStart' {
-            Write-Host "> $applyText for user $(GetUserName)..."
-            $startMenuBinFile = GetStartMenuBinPathForUser -UserName (GetUserName)
+            Write-Host "> $applyText..."
+            $startMenuBinFile = GetStartMenuBinPathForUser
             if (-not [string]::IsNullOrWhiteSpace($startMenuBinFile)) {
                 ReplaceStartMenu -startMenuBinFile $startMenuBinFile
             }
@@ -102,25 +102,17 @@ function Invoke-FeatureApply {
             return
         }
         'ReplaceStart' {
-            Write-Host "> $applyText for user $(GetUserName)..."
-            $startMenuBinFile = GetStartMenuBinPathForUser -UserName (GetUserName)
+            Write-Host "> $applyText..."
+            $startMenuBinFile = GetStartMenuBinPathForUser
             if (-not [string]::IsNullOrWhiteSpace($startMenuBinFile)) {
                 ReplaceStartMenu -startMenuBinFile $startMenuBinFile -startMenuTemplate $script:Params.Item("ReplaceStart")
             }
             Write-Host ""
             return
         }
-        'ClearStartAllUsers' {
-            ReplaceStartMenuForAllUsers
-            return
-        }
-        'ReplaceStartAllUsers' {
-            ReplaceStartMenuForAllUsers -startMenuTemplate $script:Params.Item("ReplaceStartAllUsers")
-            return
-        }
         'DisableStoreSearchSuggestions' {
-            Write-Host "> Disabling Microsoft Store search suggestions for user $(GetUserName)..."
-            $storeDb = GetStoreAppsDatabasePathForUser -UserName (GetUserName)
+            Write-Host "> Disabling Microsoft Store search suggestions for the Default user profile..."
+            $storeDb = GetStoreAppsDatabasePathForUser
             if ($storeDb) {
                 DisableStoreSearchSuggestions -StoreAppsDatabase $storeDb
             }
@@ -150,8 +142,8 @@ function Invoke-FeatureUndo {
 
     switch ($FeatureId) {
         'DisableStoreSearchSuggestions' {
-            Write-Host "> Re-enabling Microsoft Store search suggestions for user $(GetUserName)..."
-            $storeDb = GetStoreAppsDatabasePathForUser -UserName (GetUserName)
+            Write-Host "> Re-enabling Microsoft Store search suggestions for the Default user profile..."
+            $storeDb = GetStoreAppsDatabasePathForUser
             if ($storeDb) {
                 EnableStoreSearchSuggestions -StoreAppsDatabase $storeDb
             }

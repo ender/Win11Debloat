@@ -1,6 +1,6 @@
 # How to Contribute?
 
-This fork is a terminal-only, fully-scriptable build of [Raphire/Win11Debloat](https://github.com/Raphire/Win11Debloat), built for unattended/automated debloating. The GUI, registry backup/restore-point flow and multi-user/Sysprep targeting have intentionally been removed - every tweak is driven by command-line flags or a JSON config file. Most of the tweak/app definitions are kept in sync with upstream via an automated pull request workflow, so contributions to individual tweaks are often best made upstream; contributions here should focus on the CLI/automation layer itself.
+This fork is a terminal-only, fully-scriptable build of [Raphire/Win11Debloat](https://github.com/Raphire/Win11Debloat), built for unattended/automated debloating. The GUI and registry backup/restore-point flow have intentionally been removed, and every tweak is driven by command-line flags or a JSON config file. Per-user tweaks always target the Default user profile hive (`C:\Users\Default\NTUSER.DAT`) rather than the current/invoking user or all existing users, for use during sysprep image preparation. Most of the tweak/app definitions are kept in sync with upstream via an automated pull request workflow, so contributions to individual tweaks are often best made upstream; contributions here should focus on the CLI/automation layer itself.
 
 We welcome contributions from the community. You can contribute by:
 

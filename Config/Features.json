@@ -163,26 +163,6 @@
       ]
     },
     {
-      "GroupId": "ClearStart",
-      "Label": "Remove pinned apps from the start menu",
-      "ToolTip": "This setting allows you to quickly remove all pinned apps from the start menu.",
-      "Category": "Start Menu & Search",
-      "Values": [
-        {
-          "Label": "Remove for the selected user",
-          "FeatureIds": [
-            "ClearStart"
-          ]
-        },
-        {
-          "Label": "Remove for all users",
-          "FeatureIds": [
-            "ClearStartAllUsers"
-          ]
-        }
-      ]
-    },
-    {
       "GroupId": "ExplorerLocation",
       "Label": "Open File Explorer to",
       "ToolTip": "This setting allows you to choose the default location that File Explorer opens to.",
@@ -534,7 +514,7 @@
     },
     {
       "FeatureId": "ClearStart",
-      "Label": "Remove all pinned apps from the start menu for this user only",
+      "Label": "Remove all pinned apps from the start menu for the Default user profile, inherited by every new user",
       "Category": "Start Menu & Search",
       "RegistryKey": null,
       "ApplyText": "Removing all pinned apps from the start menu",
@@ -545,35 +525,11 @@
       "MaxVersion": null
     },
     {
-      "FeatureId": "ClearStartAllUsers",
-      "Label": "Remove all pinned apps from the start menu for all existing and new users",
-      "Category": "Start Menu & Search",
-      "RegistryKey": null,
-      "ApplyText": "Removing all pinned apps from the start menu for all users",
-      "UndoLabel": null,
-      "ApplyUndoText": null,
-      "RegistryUndoKey": null,
-      "MinVersion": 22621,
-      "MaxVersion": null
-    },
-    {
       "FeatureId": "ReplaceStart",
-      "Label": "Replace the start menu layout for this user only with the provided template file",
+      "Label": "Replace the start menu layout for the Default user profile, inherited by every new user, with the provided template file",
       "Category": null,
       "RegistryKey": null,
       "ApplyText": "Replacing the start menu",
-      "UndoLabel": null,
-      "ApplyUndoText": null,
-      "RegistryUndoKey": null,
-      "MinVersion": 22621,
-      "MaxVersion": null
-    },
-    {
-      "FeatureId": "ReplaceStartAllUsers",
-      "Label": "Replace the start menu layout for all existing and new users with the provided template file",
-      "Category": null,
-      "RegistryKey": null,
-      "ApplyText": "Replacing the start menu for all users",
       "UndoLabel": null,
       "ApplyUndoText": null,
       "RegistryUndoKey": null,

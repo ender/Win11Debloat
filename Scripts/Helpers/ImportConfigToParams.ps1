@@ -64,20 +64,6 @@ function ImportConfigToParams {
         }
     }
 
-    if ($configJson.Deployment) {
-        $deploymentLookup = @{}
-        foreach ($setting in @($configJson.Deployment)) {
-            if ($setting -and $setting.Name) {
-                $deploymentLookup[$setting.Name] = $setting.Value
-            }
-        }
-
-        if ($deploymentLookup.ContainsKey('RestartExplorer') -and -not [bool]$deploymentLookup['RestartExplorer']) {
-            AddParameter 'NoRestartExplorer'
-            $importedItems++
-        }
-    }
-
     if ($importedItems -eq 0) {
         throw "The config file contains no importable data: $resolvedConfigPath"
     }
